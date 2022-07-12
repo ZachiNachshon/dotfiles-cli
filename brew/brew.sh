@@ -5,10 +5,10 @@
 # Author       Zachi Nachshon <zachi.nachshon@gmail.com>
 #==============================================================================
 
-source "${DOTFILES_CLI_REPO_LOCAL_PATH}/external/shell_scripts_lib/logger.sh"
-source "${DOTFILES_CLI_REPO_LOCAL_PATH}/external/shell_scripts_lib/prompter.sh"
-source "${DOTFILES_CLI_REPO_LOCAL_PATH}/external/shell_scripts_lib/io.sh"
-source "${DOTFILES_CLI_REPO_LOCAL_PATH}/external/shell_scripts_lib/strings.sh"
+source "${DOTFILES_CLI_INSTALL_PATH}/external/shell_scripts_lib/logger.sh"
+source "${DOTFILES_CLI_INSTALL_PATH}/external/shell_scripts_lib/prompter.sh"
+source "${DOTFILES_CLI_INSTALL_PATH}/external/shell_scripts_lib/io.sh"
+source "${DOTFILES_CLI_INSTALL_PATH}/external/shell_scripts_lib/strings.sh"
 
 DOTFILES_REPO_BREW_PACKAGE_PATH="${DOTFILES_REPO_LOCAL_PATH}/brew/packages.txt"
 DOTFILES_REPO_BREW_CASKS_PATH="${DOTFILES_REPO_LOCAL_PATH}/brew/casks.txt"

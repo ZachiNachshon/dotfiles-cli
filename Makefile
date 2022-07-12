@@ -1,21 +1,34 @@
 default: help
 
-.PHONY: create_artifact 
-create_artifact: ## Create a release artifact
-	tar \
+.PHONY: install_from_respository
+install_from_respository: ## Install a local dotfiles CLI from this repository
+	@tar \
 	--exclude='.git' \
 	--exclude='Makefile' \
 	--exclude='install.sh' \
 	--exclude='dotfiles-cli.tar.gz' \
-	-zcvf dotfiles-cli.tar.gz \
+	-zcf dotfiles-cli.tar.gz \
 	.
-	
+	@LOCAL_ARCHIVE_FILEPATH=$(CURDIR)/dotfiles-cli.tar.gz ./install.sh
+	@rm -rf $(CURDIR)/dotfiles-cli.tar.gz
+
+.PHONY: uninstall
+uninstall: ## Uninstall a local dotfiles CLI
+	@./uninstall.sh
+
 .PHONY: release_version_create
 release_version_create: ## Create release tag in GitHub with version from resources/version.txt
+	@tar \
+	--exclude='.git' \
+	--exclude='Makefile' \
+	--exclude='install.sh' \
+	--exclude='dotfiles-cli.tar.gz' \
+	-zcf dotfiles-cli.tar.gz \
+	.
 	@sh -c "'$(CURDIR)/external/shell_scripts_lib/github/release.sh' \
 	'action: create' \
 	'version_file_path: ./resources/version.txt' \
-	'artifact_file_path: git-deps-syncer.sh' \
+	'artifact_file_path: dotfiles-cli.tar.gz' \
 	'debug'"
 
 .PHONY: release_version_delete

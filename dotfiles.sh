@@ -1,25 +1,29 @@
 #!/bin/bash
 
-# within ~/.local/bin/dotfiles
-# ln -sf ~/.config/dotfiles/dotfiles.sh dotfiles
-# chmod +x dotfiles
+# Title         Dotfiles CLI (https://github.com/ZachiNachshon/dotfiles-cli)
+# Author        Zachi Nachshon <zachi.nachshon@gmail.com>
+# Supported OS  Linux & macOS
+# Description   Load plugins and scripts in a centralized place instead of
+#               having scattered load commands on shell-rc file(s).
+#==============================================================================
 
-DOTFILES_EXEC_PATH="$HOME/.local/bin/dotfiles"
-# DOTFILES_CLI_REPO_LOCAL_PATH="$HOME/.local/dotfiles-cli"
-DOTFILES_CLI_REPO_LOCAL_PATH="${HOME}/codebase/github/dotfiles-cli"
-DOTFILES_REPO_LOCAL_PATH="$HOME/.config/dotfiles"
+# DOTFILES_CLI_INSTALL_PATH="$HOME/.config/dotfiles-cli"
+DOTFILES_CLI_INSTALL_PATH="${HOME}/codebase/github/dotfiles-cli"
+DOTFILES_REPO_LOCAL_PATH="${HOME}/.config/dotfiles"
 
-source "${DOTFILES_CLI_REPO_LOCAL_PATH}/brew/brew.sh"
-source "${DOTFILES_CLI_REPO_LOCAL_PATH}/dotfiles/linker.sh"
-source "${DOTFILES_CLI_REPO_LOCAL_PATH}/os/mac/mac.sh"
-source "${DOTFILES_CLI_REPO_LOCAL_PATH}/os/linux/linux.sh"
-source "${DOTFILES_CLI_REPO_LOCAL_PATH}/external/shell_scripts_lib/logger.sh"
-source "${DOTFILES_CLI_REPO_LOCAL_PATH}/external/shell_scripts_lib/prompter.sh"
-source "${DOTFILES_CLI_REPO_LOCAL_PATH}/external/shell_scripts_lib/git.sh"
+source "${DOTFILES_CLI_INSTALL_PATH}/brew/brew.sh"
+source "${DOTFILES_CLI_INSTALL_PATH}/dotfiles/syncer.sh"
+source "${DOTFILES_CLI_INSTALL_PATH}/os/mac/mac.sh"
+source "${DOTFILES_CLI_INSTALL_PATH}/os/linux/linux.sh"
+source "${DOTFILES_CLI_INSTALL_PATH}/external/shell_scripts_lib/logger.sh"
+source "${DOTFILES_CLI_INSTALL_PATH}/external/shell_scripts_lib/prompter.sh"
+source "${DOTFILES_CLI_INSTALL_PATH}/external/shell_scripts_lib/git.sh"
+source "${DOTFILES_CLI_INSTALL_PATH}/external/shell_scripts_lib/io.sh"
 
-SCRIPT_NAME="Dotfiles"
+SCRIPT_MENU_TITLE="Dotfiles"
 
-CLI_ARGUMENT_LINK_COMMAND=""
+CLI_ARGUMENT_SYNC_COMMAND=""
+CLI_ARGUMENT_UNSYNC_COMMAND=""
 CLI_ARGUMENT_SYNC_REPO_DOTFILES=""
 CLI_ARGUMENT_BREW_COMMAND=""
 CLI_ARGUMENT_OS_COMMAND=""
@@ -28,7 +32,8 @@ CLI_ARGUMENT_LOCATIONS=""
 CLI_ARGUMENT_REPOSITORY=""
 CLI_ARGUMENT_VERSION=""
 
-CLI_VALUE_LINK_OPTION=""
+CLI_VALUE_SYNC_OPTION=""
+CLI_VALUE_UNSYNC_OPTION=""
 CLI_VALUE_BREW_OPTION=""
 CLI_VALUE_OS_OPTION=""
 
@@ -36,8 +41,8 @@ CLI_OPTION_DRY_RUN=""
 CLI_OPTION_VERBOSE=""
 CLI_OPTION_SILENT=""
 
-is_link_dotfiles() {
-  [[ -n ${CLI_ARGUMENT_LINK_COMMAND} ]]
+is_sync_dotfiles() {
+  [[ -n ${CLI_ARGUMENT_SYNC_COMMAND} ]]
 }
 
 is_sync_repo_dotfiles() {
@@ -93,19 +98,19 @@ ${COLOR_WHITE}ENV VARS${COLOR_NONE}:
 }
 
 print_local_versions_and_exit() {
-  local commit_hash=$(git_get_current_commit_hash "${DOTFILES_CLI_REPO_LOCAL_PATH}" "master")
-  echo -e "dotfiles ${commit_hash}"
+  local version=$(cat ${DOTFILES_CLI_INSTALL_PATH}/resources/version.txt)
+  echo -e "dotfiles ${version}"
   exit 0
 }
 
-reload_managed_files_inner() {
+reload_session_files_inner() {
   if ! is_dry_run; then
-    for file in $(find ${DOTFILES_REPO_LOCAL_PATH}/dotfiles/managed -name ".*"); do
+    for file in $(find ${DOTFILES_REPO_LOCAL_PATH}/dotfiles/session -name ".*"); do
     #  echo "${file}"
       source ${file}
     done
   fi  
-  log_indicator_good "Sourced managed dotfiles"
+  log_indicator_good "Sourced session dotfiles"
 }
 
 reload_transient_files() {
@@ -129,8 +134,8 @@ reload_custom_files_inner() {
 }
 
 reload_active_shell_session_and_exit() {
-  reload_managed_files_inner
   reload_transient_files
+  reload_session_files_inner
   reload_custom_files_inner
   # source ~/.zshrc
   # exec zsh
@@ -169,14 +174,14 @@ change_dir_to_dotfiles_local_repo_and_exit() {
 print_help_menu_and_exit() {
   local exec_filename=$1
   local base_exec_filename=$(basename "${exec_filename}")
-  echo -e "${SCRIPT_NAME} - Manage a local development environment"
+  echo -e "${SCRIPT_MENU_TITLE} - Manage a local development environment"
   echo -e " "
   echo -e "${COLOR_WHITE}USAGE${COLOR_NONE}"
   echo -e "  "${base_exec_filename}" [command] [flag]"
   echo -e " "
   echo -e "${COLOR_WHITE}AVAILABLE COMMANDS${COLOR_NONE}"
-  echo -e "  ${COLOR_LIGHT_CYAN}link${COLOR_NONE} [option]             Link and source dotfiles by catagory (options: home/managed/shell/transient/custom/all)"
-  echo -e "  ${COLOR_LIGHT_CYAN}unlink${COLOR_NONE}                    Unlink all symlinks to the dotfiles repository"
+  echo -e "  ${COLOR_LIGHT_CYAN}sync${COLOR_NONE} [option]             Sync and source dotfiles by catagory (options: home/session/shell/transient/custom/all)"
+  echo -e "  ${COLOR_LIGHT_CYAN}unsync${COLOR_NONE} [option]           Unsync dotfiles symlinks by catagory (options: home/shell/all)"
   echo -e "  ${COLOR_LIGHT_CYAN}brew${COLOR_NONE} [option]             Update local brew components (options: packages/casks/drivers/services/all)"
   echo -e "  ${COLOR_LIGHT_CYAN}os${COLOR_NONE} [option]               Update OS settings and preferences (options: mac/linux)"
   echo -e "  ${COLOR_LIGHT_CYAN}reload${COLOR_NONE}                    Reload active shell session"
@@ -207,10 +212,16 @@ parse_program_arguments() {
       print_help_menu_and_exit "$0"
       shift
       ;;
-    link)
-      CLI_ARGUMENT_LINK_COMMAND="link"
+    sync)
+      CLI_ARGUMENT_SYNC_COMMAND="sync"
       shift
-      CLI_VALUE_LINK_OPTION=$1
+      CLI_VALUE_SYNC_OPTION=$1
+      shift
+      ;;
+    unsync)
+      CLI_ARGUMENT_UNSYNC_COMMAND="unsync"
+      shift
+      CLI_VALUE_UNSYNC_OPTION=$1
       shift
       ;;
     reload)
@@ -279,9 +290,12 @@ parse_program_arguments() {
 }
 
 verify_program_arguments() {
-  if check_invalid_link_command_value; then
-    # Verify proper command args ordering: dotfiles link home --dry-run -v
-    log_fatal "Command 'link' is missing a mandatory option. options: home/managed/shell/transient/custom/all"
+  if check_invalid_sync_command_value; then
+    # Verify proper command args ordering: dotfiles sync all --dry-run -v
+    log_fatal "Command 'sync' is missing a mandatory option. options: home/session/shell/transient/custom/all"
+  elif check_invalid_unsync_command_value; then
+    # Verify proper command args ordering: dotfiles unsync shell --dry-run -v
+    log_fatal "Command 'unsync' is missing a mandatory option. options: home/shell/all"
   elif check_invalid_brew_command_value; then
     # Verify proper command args ordering: dotfiles brew casks --dry-run -v
     log_fatal "Command 'brew' is missing a mandatory option. options: packages/casks/drivers/services/all"
@@ -291,9 +305,14 @@ verify_program_arguments() {
   fi
 }
 
-check_invalid_link_command_value() {
-  # If brew command is not empty and its value is a flag - not valid
-  [[ -n "${CLI_ARGUMENT_LINK_COMMAND}" && (-z "${CLI_VALUE_LINK_OPTION}" || "${CLI_VALUE_BREW_OPTION}" == -*) ]]
+check_invalid_sync_command_value() {
+  # If sync command is not empty and its value is a flag - not valid
+  [[ -n "${CLI_ARGUMENT_SYNC_COMMAND}" && (-z "${CLI_VALUE_SYNC_OPTION}" || "${CLI_VALUE_SYNC_OPTION}" == -*) ]]
+}
+
+check_invalid_unsync_command_value() {
+  # If unsync command is not empty and its value is a flag - not valid
+  [[ -n "${CLI_ARGUMENT_UNSYNC_COMMAND}" && (-z "${CLI_VALUE_UNSYNC_OPTION}" || "${CLI_VALUE_UNSYNC_OPTION}" == -*) ]]
 }
 
 check_invalid_brew_command_value() {
@@ -334,8 +353,8 @@ main() {
     print_cli_used_locations_and_exit
   fi
 
-  if is_link_dotfiles; then
-    run_link_command "${CLI_VALUE_LINK_OPTION}"
+  if is_sync_dotfiles; then
+    run_sync_command "${CLI_VALUE_SYNC_OPTION}"
     reload_active_shell_session_and_exit
   fi
 

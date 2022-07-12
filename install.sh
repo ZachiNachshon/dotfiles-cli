@@ -18,8 +18,8 @@ LOCAL_ARCHIVE_FILEPATH=${LOCAL_ARCHIVE_FILEPATH=""}
 
 DOTFILES_CLI_REPOSITORY_URL="https://github.com/ZachiNachshon/dotfiles-cli"
 DOTFILES_CLI_ARCHIVE_NAME="dotfiles-cli.tar.gz"
-DOTFILES_CLI_CONFIG_LOCAL_PATH="${HOME}/.config/dotfiles-cli-test"
-DOTFILES_CLI_EXECUTABLE_FILE_NAME=dotfiles
+DOTFILES_CLI_INSTALL_PATH="${HOME}/.config/dotfiles-cli"
+DOTFILES_CLI_EXECUTABLE_NAME=dotfiles
 
 DARWIN_BIN_DIR="$HOME/.local/bin"
 LINUX_BIN_DIR="$HOME/.local/bin"
@@ -45,6 +45,10 @@ exit_on_error() {
     # >&2 echo "\"${message}\""
     exit $exit_code
   fi
+}
+
+new_line() {
+  echo -e "" >&2
 }
 
 _log_base() {
@@ -134,17 +138,17 @@ read_os_type() {
 }
 
 get_dotfiles_cli_archive_filepath() {
-  echo "${DOTFILES_CLI_CONFIG_LOCAL_PATH}/${DOTFILES_CLI_ARCHIVE_NAME}"
+  echo "${DOTFILES_CLI_INSTALL_PATH}/${DOTFILES_CLI_ARCHIVE_NAME}"
 }
 
 calculate_dotfiles_cli_exec_symlink_path() {
   local os_type=$(read_os_type)
   if [[ "${os_type}" == "linux" ]]; then
     # $HOME/.local/bin/dotfiles
-    echo "${LINUX_BIN_DIR}/${DOTFILES_CLI_EXECUTABLE_FILE_NAME}"
+    echo "${LINUX_BIN_DIR}/${DOTFILES_CLI_EXECUTABLE_NAME}"
   elif [[ "${os_type}" == "darwin" ]]; then
     # $HOME/.local/bin/dotfiles
-    echo "${DARWIN_BIN_DIR}/${DOTFILES_CLI_EXECUTABLE_FILE_NAME}"
+    echo "${DARWIN_BIN_DIR}/${DOTFILES_CLI_EXECUTABLE_NAME}"
   else
     echo ""
   fi
@@ -152,9 +156,9 @@ calculate_dotfiles_cli_exec_symlink_path() {
 
 adjust_global_executable_symlink() {
   local dotfiles_cli_exec_bin_path=$1
-  local dotfiles_cli_script_path="${DOTFILES_CLI_CONFIG_LOCAL_PATH}/dotfiles.sh"
+  local dotfiles_cli_script_path="${DOTFILES_CLI_INSTALL_PATH}/dotfiles.sh"
 
-  log_info "Elevating permission on dotfiles executable. path: ${dotfiles_cli_script_path}"
+  log_info "Elevating executable permission. path: ${dotfiles_cli_script_path}"
   if is_dry_run; then
     echo """
     chmod +x ${dotfiles_cli_script_path}
@@ -163,7 +167,7 @@ adjust_global_executable_symlink() {
     chmod +x "${dotfiles_cli_script_path}"
   fi
   
-  log_info "Linking dotfiles executable to bin directory. path: ${dotfiles_cli_script_path}"
+  log_info "Linking executable to bin directory. symlink: ${dotfiles_cli_exec_bin_path}"
   if is_dry_run; then
     echo """
     ln -sf ${dotfiles_cli_script_path} ${dotfiles_cli_exec_bin_path} 
@@ -184,13 +188,11 @@ add_dotfiles_cli_exec_bin_path_to_rc_file() {
     echo -e """${COLOR_RED}
 To use 'dotfiles' from global scope, add the following to the end of the RC file:
       
-  export PATH=${dotfiles_cli_exec_bin_path}:\${PATH}
-${COLOR_NONE}
-    """
+  export PATH=${dotfiles_cli_exec_bin_path}:\${PATH}${COLOR_NONE}"""
   else
-    log_info "Updating the shell PATH. file: ${ZSH_RC_PATH}, path: ${dotfiles_cli_exec_bin_path}"
 
     if is_file_exist "${ZSH_RC_PATH}" && ! is_file_contain "${ZSH_RC_PATH}" "${dotfiles_cli_exec_bin_path}" ; then
+      log_info "Updating shell PATH. rc_file: ${ZSH_RC_PATH}"
       if is_dry_run; then
         echo """
     echo export PATH=${dotfiles_cli_exec_bin_path}:\${PATH} >> ${ZSH_RC_PATH}
@@ -201,6 +203,7 @@ ${COLOR_NONE}
     fi
 
     if is_file_exist "${BASH_RC_PATH}" && ! is_file_contain "${BASH_RC_PATH}" "${dotfiles_cli_exec_bin_path}" ; then
+      log_info "Updating shell PATH. rc_file: ${BASH_RC_PATH}"
       if is_dry_run; then
         echo """
     echo export PATH=${dotfiles_cli_exec_bin_path}:\${PATH} >> ${BASH_RC_PATH}
@@ -211,6 +214,7 @@ ${COLOR_NONE}
     fi
 
     if is_file_exist "${BASH_PROFILE_PATH}" && ! is_file_contain "${BASH_PROFILE_PATH}" "${dotfiles_cli_exec_bin_path}" ; then
+      log_info "Updating shell PATH. rc_file: ${BASH_PROFILE_PATH}"
       if is_dry_run; then
         echo """
     echo export PATH=${dotfiles_cli_exec_bin_path}:\${PATH} >> ${BASH_PROFILE_PATH}
@@ -224,7 +228,9 @@ ${COLOR_NONE}
 
 copy_local_archive_to_config_path() {
   log_info "Installing dotfiles CLI from local artifact. path: ${LOCAL_ARCHIVE_FILEPATH}"
-  local copy_path="${DOTFILES_CLI_CONFIG_LOCAL_PATH}"
+
+  log_info "Copying archive to config path"
+  local copy_path="${DOTFILES_CLI_INSTALL_PATH}"
   if is_dry_run; then
     echo """
     rsync ${LOCAL_ARCHIVE_FILEPATH} ${copy_path}
@@ -237,28 +243,8 @@ copy_local_archive_to_config_path() {
 download_latest_archive_to_config_path() {
   log_info "Installing dotfiles CLI from GitHub"
   local filename="${DOTFILES_CLI_ARCHIVE_NAME}"
-  local download_path="${DOTFILES_CLI_CONFIG_LOCAL_PATH}"
+  local download_path="${DOTFILES_CLI_INSTALL_PATH}"
   local url="${DOTFILES_CLI_REPOSITORY_URL}/releases/download/v${VERSION}/${filename}"
-
-  if is_directory_exist "${download_path}"; then
-   log_info "Clearing dotfiles-cli config path"
-    if is_dry_run; then
-      echo """
-      rm -rf ${download_path}
-      """
-    else
-      rm -rf "${download_path}"
-    fi
-  fi
-
-  log_info "Creating a fresh dotfiles-cli config path"
-  if is_dry_run; then
-    echo """
-    mkdir -p ${download_path}
-    """
-  else
-    mkdir -p "${download_path}"
-  fi
 
   cwd=$(pwd)
   cd "${download_path}" || exit
@@ -279,19 +265,19 @@ extract_dotfiles_cli_archive() {
   # ${HOME}/.config/dotfiles-cli/dotfiles-cli.tar.gz
   local archive_file_path=$(get_dotfiles_cli_archive_filepath)
   # ${HOME}/.config/dotfiles-cli
-  local archive_folder_path="${DOTFILES_CLI_CONFIG_LOCAL_PATH}"
+  local archive_folder_path="${DOTFILES_CLI_INSTALL_PATH}"
 
-  log_info "Extracting archive to dotfiles-cli config path. path: ${archive_folder_path}"
+  log_info "Extracting archive. destination: ${archive_folder_path}"
   if is_dry_run; then
     echo """
-    tar -xzvf ${archive_file_path} -C ${archive_folder_path}
+    tar -xzf ${archive_file_path} -C ${archive_folder_path}
     """
   else
-    tar -xzvf "${archive_file_path}" -C "${archive_folder_path}"
+    tar -xzf "${archive_file_path}" -C "${archive_folder_path}"
   fi
 
   if is_file_exist "${archive_file_path}"; then
-    log_info "Cleaning archive file"
+    log_info "Removing archive file"
     if is_dry_run; then
       echo """
       rm -rf ${archive_file_path}
@@ -302,18 +288,44 @@ extract_dotfiles_cli_archive() {
   fi
 }
 
+clear_prevoius_installation() {
+  log_info "Creating a fresh installation folder"
+  local dotfiles_cli_install_path="${DOTFILES_CLI_INSTALL_PATH}"
+
+  if is_directory_exist "${dotfiles_cli_install_path}"; then
+    if is_dry_run; then
+      echo """
+      rm -rf ${dotfiles_cli_install_path}
+      """
+    else
+      rm -rf "${dotfiles_cli_install_path}"
+    fi
+  fi
+
+  if is_dry_run; then
+    echo """
+    mkdir -p ${dotfiles_cli_install_path}
+    """
+  else
+    mkdir -p "${dotfiles_cli_install_path}"
+  fi
+}
+
 main() {
   local dotfiles_cli_exec_bin_path=$(calculate_dotfiles_cli_exec_symlink_path)
 
+  clear_prevoius_installation
+
   if is_install_from_local_archive; then
     copy_local_archive_to_config_path
-  else 
+  else
     download_latest_archive_to_config_path
-  fi 
+  fi
 
   extract_dotfiles_cli_archive
   adjust_global_executable_symlink "${dotfiles_cli_exec_bin_path}"
   add_dotfiles_cli_exec_bin_path_to_rc_file "${dotfiles_cli_exec_bin_path}"
+  new_line
   log_info "Type 'dotfiles' to print the help menu (shell session reload might be required)"
 }
 
