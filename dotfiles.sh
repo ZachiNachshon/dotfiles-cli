@@ -45,6 +45,10 @@ is_sync_dotfiles() {
   [[ -n ${CLI_ARGUMENT_SYNC_COMMAND} ]]
 }
 
+is_unsync_dotfiles() {
+  [[ -n ${CLI_ARGUMENT_UNSYNC_COMMAND} ]]
+}
+
 is_sync_repo_dotfiles() {
   [[ -n ${CLI_ARGUMENT_SYNC_REPO_DOTFILES} ]]
 }
@@ -144,6 +148,11 @@ reload_active_shell_session_and_exit() {
 
 run_brew_command_and_exit() {
   run_homebrew_command "${CLI_VALUE_BREW_OPTION}"
+  exit 0
+}
+
+run_unsync_command_and_exit() {
+  run_unsync_command "${CLI_VALUE_UNSYNC_OPTION}"
   exit 0
 }
 
@@ -356,6 +365,10 @@ main() {
   if is_sync_dotfiles; then
     run_sync_command "${CLI_VALUE_SYNC_OPTION}"
     reload_active_shell_session_and_exit
+  fi
+
+  if is_unsync_dotfiles; then
+    run_unsync_command_and_exit
   fi
 
   if is_brew_command; then
