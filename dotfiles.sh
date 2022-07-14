@@ -13,12 +13,14 @@ DOTFILES_REPO_LOCAL_PATH="${HOME}/.config/dotfiles"
 
 source "${DOTFILES_CLI_INSTALL_PATH}/brew/brew.sh"
 source "${DOTFILES_CLI_INSTALL_PATH}/dotfiles/syncer.sh"
+source "${DOTFILES_CLI_INSTALL_PATH}/dotfiles/unsyncer.sh"
 source "${DOTFILES_CLI_INSTALL_PATH}/os/mac/mac.sh"
 source "${DOTFILES_CLI_INSTALL_PATH}/os/linux/linux.sh"
 source "${DOTFILES_CLI_INSTALL_PATH}/external/shell_scripts_lib/logger.sh"
 source "${DOTFILES_CLI_INSTALL_PATH}/external/shell_scripts_lib/prompter.sh"
 source "${DOTFILES_CLI_INSTALL_PATH}/external/shell_scripts_lib/git.sh"
 source "${DOTFILES_CLI_INSTALL_PATH}/external/shell_scripts_lib/io.sh"
+source "${DOTFILES_CLI_INSTALL_PATH}/external/shell_scripts_lib/shell.sh"
 
 SCRIPT_MENU_TITLE="Dotfiles"
 
@@ -36,10 +38,6 @@ CLI_VALUE_SYNC_OPTION=""
 CLI_VALUE_UNSYNC_OPTION=""
 CLI_VALUE_BREW_OPTION=""
 CLI_VALUE_OS_OPTION=""
-
-CLI_OPTION_DRY_RUN=""
-CLI_OPTION_VERBOSE=""
-CLI_OPTION_SILENT=""
 
 is_sync_dotfiles() {
   [[ -n ${CLI_ARGUMENT_SYNC_COMMAND} ]]
@@ -80,7 +78,8 @@ is_print_version() {
 print_cli_used_locations_and_exit() {
   echo -e """${COLOR_WHITE}LOCATIONS${COLOR_NONE}:
 
-  ${COLOR_LIGHT_CYAN}Clone Path${COLOR_NONE}.......: $HOME/.config/dotfiles
+  ${COLOR_LIGHT_CYAN}Clone Path${COLOR_NONE}........: ${DOTFILES_REPO_LOCAL_PATH}
+  ${COLOR_LIGHT_CYAN}Global Binary${COLOR_NONE}.....: ${DOTFILES_CLI_INSTALL_PATH}
 
 ${COLOR_WHITE}HOMEBREW PATHS${COLOR_NONE}:
 
@@ -107,42 +106,15 @@ print_local_versions_and_exit() {
   exit 0
 }
 
-reload_session_files_inner() {
-  if ! is_dry_run; then
-    for file in $(find ${DOTFILES_REPO_LOCAL_PATH}/dotfiles/session -name ".*"); do
-    #  echo "${file}"
-      source ${file}
-    done
-  fi  
-  log_indicator_good "Sourced session dotfiles"
-}
-
-reload_transient_files() {
-  if ! is_dry_run; then
-    for file in $(find ${DOTFILES_REPO_LOCAL_PATH}/dotfiles/transient -name ".*"); do
-    #  echo "${file}"
-      source ${file}
-    done
-  fi  
-  log_indicator_good "Sourced transient dotfiles"
-}
-
-reload_custom_files_inner() {
-  if ! is_dry_run; then
-    for file in $(find ${DOTFILES_REPO_LOCAL_PATH}/dotfiles/custom -name ".*"); do
-    #  echo "${file}"
-      source ${file}
-    done
-  fi  
-  log_indicator_good "Sourced custom dotfiles"
-}
-
 reload_active_shell_session_and_exit() {
-  reload_transient_files
-  reload_session_files_inner
-  reload_custom_files_inner
-  # source ~/.zshrc
-  # exec zsh
+  # Session files are being sources directly from the shell RC file (zshrc, bashrc etc..)
+  # For more information please refer to reload_session.sh
+  local shell_in_use=$(shell_get_name)
+  local reload_session_silent_option="False"
+  if is_silent; then 
+    reload_session_silent_option="True"
+  fi
+  (export DOTFILES_CLI_SILENT_OPTION=${reload_session_silent_option} && exec ${shell_in_use})
   exit 0
 }
 
@@ -262,10 +234,8 @@ parse_program_arguments() {
       shift
       ;;
     --dry-run)
-      # Used by logger.sh
+      # Used by logger.sh / reload_session.sh
       export LOGGER_DRY_RUN="true"
-      # Used by brew.sh
-      export CLI_OPTION_DRY_RUN="true"
       shift
       ;;
     -y)
@@ -274,15 +244,13 @@ parse_program_arguments() {
       shift
       ;;
     -v | --verbose)
-      # Used by brew.sh
-      export CLI_OPTION_VERBOSE="verbose"
+      # Used by logger.sh
+      export LOGGER_DEBUG="true"
       shift
       ;;
     -s | --silent)
-      # Used by logger.sh
+      # Used by logger.sh / reload_session.sh
       export LOGGER_SILENT="true"
-      # Used by brew.sh
-      export CLI_OPTION_SILENT="true"
       shift
       ;;
     *)
@@ -291,11 +259,6 @@ parse_program_arguments() {
       ;;
     esac
   done
-
-  # Set defaults
-  CLI_OPTION_VERBOSE=${CLI_OPTION_VERBOSE=''}
-  CLI_OPTION_DRY_RUN=${CLI_OPTION_DRY_RUN=''}
-  CLI_OPTION_SILENT=${CLI_OPTION_SILENT=''}
 }
 
 verify_program_arguments() {
@@ -332,18 +295,6 @@ check_invalid_brew_command_value() {
 check_invalid_os_command_value() {
   # If brew command is not empty and its value is a flag - not valid
   [[ -n "${CLI_ARGUMENT_OS_COMMAND}" && (-z "${CLI_VALUE_OS_OPTION}" || "${CLI_VALUE_OS_OPTION}" == -*) ]]
-}
-
-is_dry_run() {
-  [[ -n "${CLI_OPTION_DRY_RUN}" ]]
-}
-
-is_debug() {
-  [[ -n "${CLI_OPTION_VERBOSE}" ]]
-}
-
-is_silent() {
-  [[ -n "${CLI_OPTION_SILENT}" ]]
 }
 
 main() {

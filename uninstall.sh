@@ -85,6 +85,17 @@ log_fatal() {
   exit_on_error 1 "${message}"
 }
 
+cmd_run() {
+  local cmd_string=$1
+  if ! is_dry_run; then
+    eval "${cmd_string}"
+  else
+    echo """
+      ${cmd_string}
+  """
+  fi
+}
+
 is_tool_exist() {
   local name=$1
   [[ $(command -v "${name}") ]]
@@ -161,24 +172,14 @@ clear_prevoius_installation() {
   log_info "Removing installation folder. path: ${dotfiles_cli_unpack_path}"
 
   if is_directory_exist "${dotfiles_cli_unpack_path}"; then
-    if is_dry_run; then
-      echo """
-    rm -rf ${dotfiles_cli_unpack_path}
-      """
-    else
-      rm -rf "${dotfiles_cli_unpack_path}"
-    fi
+    cmd_run "rm -rf ${dotfiles_cli_unpack_path}"
   fi
 }
 
 main() {
   log_info "Unsyncing any dotfiles traces"
-  if is_dry_run; then
-    echo """
-    dotfiles unsync all
-    """
-  elif is_tool_exist "dotfiles"; then
-    dotfiles unsync all
+  if is_tool_exist "dotfiles"; then
+    cmd_run "dotfiles unsync all -y"
   else
     log_warning "Cannot unsync files, 'dotfiles' is not globally installed"
   fi
@@ -186,12 +187,8 @@ main() {
   local dotfiles_cli_exec_bin_path=$(calculate_dotfiles_cli_exec_symlink_path)
 
   log_info "Unlinking exec bin. path: ${dotfiles_cli_exec_bin_path}"
-  if is_dry_run; then
-    echo """
-    unlink ${dotfiles_cli_exec_bin_path}
-    """
-  elif is_file_exist "${dotfiles_cli_exec_bin_path}"; then
-    unlink "${dotfiles_cli_exec_bin_path}"
+  if is_file_exist "${dotfiles_cli_exec_bin_path}"; then
+    cmd_run "unlink ${dotfiles_cli_exec_bin_path}"
   else
     log_warning "Cannot unlink file, 'dotfiles' is not symlinked. path: ${dotfiles_cli_exec_bin_path}"
   fi

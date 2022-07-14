@@ -1,11 +1,12 @@
 #!/bin/bash
 
-# Title        Manage Homebrew components
-# Description  Install/upgrade Homebrew packages/casks/services/drivers
-# Author       Zachi Nachshon <zachi.nachshon@gmail.com>
+# Title         Manage Homebrew components
+# Author        Zachi Nachshon <zachi.nachshon@gmail.com>
+# Supported OS  Linux & macOS
+# Description   Install/upgrade Homebrew packages/casks/services/drivers
 #==============================================================================
-
 source "${DOTFILES_CLI_INSTALL_PATH}/external/shell_scripts_lib/logger.sh"
+source "${DOTFILES_CLI_INSTALL_PATH}/external/shell_scripts_lib/cmd.sh"
 source "${DOTFILES_CLI_INSTALL_PATH}/external/shell_scripts_lib/prompter.sh"
 source "${DOTFILES_CLI_INSTALL_PATH}/external/shell_scripts_lib/io.sh"
 source "${DOTFILES_CLI_INSTALL_PATH}/external/shell_scripts_lib/strings.sh"
@@ -31,15 +32,7 @@ brew_verify_and_install_homebrew() {
   log_info "Verifying Homebrew installation..."
   if ! is_directory_exist "/usr/local/Homebrew"; then
     log_warning "Homebrew is not installed, installing..."
-    if is_debug; then
-      echo """
-      /usr/bin/ruby -e $(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)
-      """
-    fi
-    if ! is_dry_run; then
-      /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
-    fi
-    
+    cmd_run "/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)""
   else
     log_info "Homebrew is installed."
   fi
@@ -47,21 +40,11 @@ brew_verify_and_install_homebrew() {
 
 brew_install_homebrew_taps() {
   log_info "Tapping to homebrew official taps..."
-  if is_debug; then
-    echo """
-    brew tap homebrew/cask-versions
-    brew tap homebrew/cask-fonts
-    brew tap homebrew/cask-drivers
-    """
-  fi
-  if ! is_dry_run; then
-    echo "not dry run"
-    # cask-versions enable us to search supported versions by providing a cask name:
-    #   - brew search <cask name>
-    brew tap homebrew/cask-versions
-    brew tap homebrew/cask-fonts
-    brew tap homebrew/cask-drivers
-  fi
+  # cask-versions enable us to search supported versions by providing a cask name:
+  #   - brew search <cask name>
+  cmd_run "brew tap homebrew/cask-versions"
+  cmd_run "brew tap homebrew/cask-fonts"
+  cmd_run "brew tap homebrew/cask-drivers"
 }
 
 brew_install_custom_taps() {
@@ -70,32 +53,15 @@ brew_install_custom_taps() {
     if is_comment "${tap_line}"; then
       continue
     fi
-    if is_debug; then
-      echo """
-      brew tap ${tap_line}
-      """
-    fi
-    if ! is_dry_run; then
-      brew tap "${tap_line}"
-    fi
-
+    cmd_run "brew tap ${tap_line}"
   done < "${DOTFILES_REPO_BREW_CUSTOM_TAPS_PATH}"
 }
 
 brew_update_outdated_plugins() {
   log_info "Updating Hombebrew outdated plugins..."
-  if is_debug; then
-    echo """
-    brew outdated
-    brew update
-    brew upgrade
-    """
-  fi
-  if ! is_dry_run; then
-    brew outdated
-    brew update
-    brew upgrade
-  fi
+  cmd_run "brew outdated"
+  cmd_run "brew update"
+  cmd_run "brew upgrade"
 }
 
 brew_install_packages() {
@@ -109,15 +75,7 @@ brew_install_packages() {
 Installing Package: ${pkg_line}
 ===================
 "
-    if is_debug; then
-      echo """
-      brew install ${pkg_line}
-      """
-    fi
-    if ! is_dry_run; then
-      brew install "${pkg_line}"
-    fi
-
+    cmd_run "brew install ${pkg_line}"
   done < "${DOTFILES_REPO_BREW_PACKAGE_PATH}"
 }
 
@@ -137,15 +95,7 @@ brew_install_casks() {
 Installing Cask: ${cask_line}
 ================
 "
-    if is_debug; then
-      echo """
-      brew install --cask ${cask_line}
-      """
-    fi
-    if ! is_dry_run; then
-      brew install --cask "${cask_line}"
-    fi
-
+    cmd_run "brew install --cask ${cask_line}"
   done < "${DOTFILES_REPO_BREW_CASKS_PATH}"
 }
 
@@ -161,15 +111,7 @@ brew_install_drivers() {
 Installing Driver: ${driver_line}
 ==================
 "
-    if is_debug; then
-      echo """
-      brew install --cask ${driver_line}
-      """
-    fi
-    if ! is_dry_run; then
-      brew install --cask "${driver_line}"
-    fi
-
+    cmd_run "brew install --cask ${driver_line}"
   done < "${DOTFILES_REPO_BREW_DRIVERS_PATH}"
 }
 
@@ -185,17 +127,8 @@ brew_install_services() {
 Installing Service: ${service_line}
 ===================
 "
-    if is_debug; then
-      echo """
-      brew install ${service_line}
-      brew services start ${service_line}
-      """
-    fi
-    if ! is_dry_run; then
-      brew install "${service_line}"
-      brew services start "${service_line}"
-    fi
-
+    cmd_run "brew install ${service_line}"
+    cmd_run "brew services start ${service_line}"
   done < "${DOTFILES_REPO_BREW_SERVICES_PATH}"
 }
 

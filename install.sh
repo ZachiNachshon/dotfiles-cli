@@ -33,6 +33,32 @@ COLOR_GREEN='\033[0;32m'
 COLOR_YELLOW="\033[0;33m"
 COLOR_NONE='\033[0m'
 
+SHELL_RC_FILE_HEADER << EOD
+#############################################################################
+#                         .dotfiles RELOAD SESSION
+#                (https://github.com/ZachiNachshon/dotfiles-cli)
+# 
+# Limitation:
+# It is not possible to tamper with parent shell process from a nested shell.
+# 
+# Solution: 
+# The 'dotfiles reload' command creates a new shell session which in turn 
+# run the RC file (this file).
+# The following script will source a 'reload_session.sh' script under
+#  current shell session without creating a nested shell session.
+#############################################################################
+REALOD_SESSION_SCRIPT_PATH="\$HOME/.config/dotfiles-cli/reload_session.sh"
+export PATH="\$HOME/.local/bin":\${PATH}
+
+if [[ -e "\${REALOD_SESSION_SCRIPT_PATH}" ]]; then
+  export LOGGER_SILENT="True"
+  source "\${REALOD_SESSION_SCRIPT_PATH}"
+else 
+  echo -e "Dotfiles CLI is not installed, cannot load plugins/reload session. path: \$HOME/.config/dotfiles-cli"
+fi
+"""
+EOD
+
 is_dry_run() {
   [[ -n ${DRY_RUN} ]]
 }
@@ -91,6 +117,17 @@ log_fatal() {
   _log_base "${COLOR_RED}${fatal_level_txt}${COLOR_NONE}: " "$@"
   message="$@"
   exit_on_error 1 "${message}"
+}
+
+cmd_run() {
+  local cmd_string=$1
+  if ! is_dry_run; then
+    eval "${cmd_string}"
+  else
+    echo """
+      ${cmd_string}
+  """
+  fi
 }
 
 is_install_from_local_archive() {
@@ -159,24 +196,12 @@ adjust_global_executable_symlink() {
   local dotfiles_cli_script_path="${DOTFILES_CLI_INSTALL_PATH}/dotfiles.sh"
 
   log_info "Elevating executable permission. path: ${dotfiles_cli_script_path}"
-  if is_dry_run; then
-    echo """
-    chmod +x ${dotfiles_cli_script_path}
-    """
-  else
-    chmod +x "${dotfiles_cli_script_path}"
-  fi
+  cmd_run "chmod +x ${dotfiles_cli_script_path}"
   
+  # macOS: ~/.local/bin/dotfiles --> ~/.config/dotfiles-cli/dotfiles.sh
+  # Linux: ~/.local/bin/dotfiles --> ~/.config/dotfiles-cli/dotfiles.sh
   log_info "Linking executable to bin directory. symlink: ${dotfiles_cli_exec_bin_path}"
-  if is_dry_run; then
-    echo """
-    ln -sf ${dotfiles_cli_script_path} ${dotfiles_cli_exec_bin_path} 
-    """
-  else
-    # macOS: ~/.local/bin/dotfiles --> ~/.config/dotfiles-cli/dotfiles.sh
-    # Linux: ~/.local/bin/dotfiles --> ~/.config/dotfiles-cli/dotfiles.sh
-    ln -sf "${dotfiles_cli_script_path}" "${dotfiles_cli_exec_bin_path}" 
-  fi
+  cmd_run "ln -sf ${dotfiles_cli_script_path} ${dotfiles_cli_exec_bin_path}"
 }
 
 add_dotfiles_cli_exec_bin_path_to_rc_file() {
@@ -186,58 +211,39 @@ add_dotfiles_cli_exec_bin_path_to_rc_file() {
   if [[ -z "${shell_in_use}" ]] ; then
     log_error "Shell '${shell_in_use}' is not supported (supported shells: bash, zsh)"
     echo -e """${COLOR_RED}
-To use 'dotfiles' from global scope, add the following to the end of the RC file:
-      
-  export PATH=${dotfiles_cli_exec_bin_path}:\${PATH}${COLOR_NONE}"""
+To use 'dotfiles' from global scope, add the following tp the start of the RC file:
+
+${SHELL_RC_FILE_HEADER}
+"""
   else
 
     if is_file_exist "${ZSH_RC_PATH}" && ! is_file_contain "${ZSH_RC_PATH}" "${dotfiles_cli_exec_bin_path}" ; then
       log_info "Updating shell PATH. rc_file: ${ZSH_RC_PATH}"
-      if is_dry_run; then
-        echo """
-    echo export PATH=${dotfiles_cli_exec_bin_path}:\${PATH} >> ${ZSH_RC_PATH}
-        """
-      else
-        echo "export PATH=${dotfiles_cli_exec_bin_path}:\${PATH}" >> "${ZSH_RC_PATH}"
-      fi
+      cmd_run "${SHELL_RC_FILE_HEADER} >> ${ZSH_RC_PATH}"
     fi
 
     if is_file_exist "${BASH_RC_PATH}" && ! is_file_contain "${BASH_RC_PATH}" "${dotfiles_cli_exec_bin_path}" ; then
       log_info "Updating shell PATH. rc_file: ${BASH_RC_PATH}"
-      if is_dry_run; then
-        echo """
-    echo export PATH=${dotfiles_cli_exec_bin_path}:\${PATH} >> ${BASH_RC_PATH}
-        """
-      else
-        echo "export PATH=${dotfiles_cli_exec_bin_path}:\${PATH}" >> "${BASH_RC_PATH}"
-      fi
+      cmd_run "${SHELL_RC_FILE_HEADER} >> ${BASH_RC_PATH}"
     fi
 
     if is_file_exist "${BASH_PROFILE_PATH}" && ! is_file_contain "${BASH_PROFILE_PATH}" "${dotfiles_cli_exec_bin_path}" ; then
       log_info "Updating shell PATH. rc_file: ${BASH_PROFILE_PATH}"
-      if is_dry_run; then
-        echo """
-    echo export PATH=${dotfiles_cli_exec_bin_path}:\${PATH} >> ${BASH_PROFILE_PATH}
-        """
-      else
-        echo "export PATH=${dotfiles_cli_exec_bin_path}:\${PATH}" >> "${BASH_PROFILE_PATH}"
-      fi
+      cmd_run "${SHELL_RC_FILE_HEADER} >> ${BASH_PROFILE_PATH}"
     fi
   fi
 }
 
 copy_local_archive_to_config_path() {
-  log_info "Installing dotfiles CLI from local artifact. path: ${LOCAL_ARCHIVE_FILEPATH}"
+  if ! is_file_exist "${LOCAL_ARCHIVE_FILEPATH}"; then 
+    log_fatal "Local archive file does not exist. path: ${LOCAL_ARCHIVE_FILEPATH}"
+  fi 
 
+  clear_prevoius_installation
+  log_info "Installing dotfiles CLI from local artifact. path: ${LOCAL_ARCHIVE_FILEPATH}"
   log_info "Copying archive to config path"
   local copy_path="${DOTFILES_CLI_INSTALL_PATH}"
-  if is_dry_run; then
-    echo """
-    rsync ${LOCAL_ARCHIVE_FILEPATH} ${copy_path}
-    """
-  else
-    rsync "${LOCAL_ARCHIVE_FILEPATH}" "${copy_path}"
-  fi
+  cmd_run "rsync ${LOCAL_ARCHIVE_FILEPATH} ${copy_path}"
 }
 
 download_latest_archive_to_config_path() {
@@ -246,18 +252,11 @@ download_latest_archive_to_config_path() {
   local download_path="${DOTFILES_CLI_INSTALL_PATH}"
   local url="${DOTFILES_CLI_REPOSITORY_URL}/releases/download/v${VERSION}/${filename}"
 
+  clear_prevoius_installation
   cwd=$(pwd)
   cd "${download_path}" || exit
-
   log_info "Downloading dotfiles-cli from GitHub. version: ${VERSION}"
-  if is_dry_run; then
-    echo """
-    curl --fail -s ${url} -L -o ${filename}
-    """
-  else
-    curl --fail -s "${url}" -L -o "${filename}"
-  fi
-
+  cmd_run "curl --fail -s ${url} -L -o ${filename}"
   cd "${cwd}" || exit
 }
 
@@ -268,23 +267,11 @@ extract_dotfiles_cli_archive() {
   local archive_folder_path="${DOTFILES_CLI_INSTALL_PATH}"
 
   log_info "Extracting archive. destination: ${archive_folder_path}"
-  if is_dry_run; then
-    echo """
-    tar -xzf ${archive_file_path} -C ${archive_folder_path}
-    """
-  else
-    tar -xzf "${archive_file_path}" -C "${archive_folder_path}"
-  fi
+  cmd_run "tar -xzf ${archive_file_path} -C ${archive_folder_path}"
 
   if is_file_exist "${archive_file_path}"; then
     log_info "Removing archive file"
-    if is_dry_run; then
-      echo """
-      rm -rf ${archive_file_path}
-      """
-    else
-      rm -rf "${archive_file_path}"
-    fi
+    cmd_run "rm -rf ${archive_file_path}"
   fi
 }
 
@@ -293,28 +280,13 @@ clear_prevoius_installation() {
   local dotfiles_cli_install_path="${DOTFILES_CLI_INSTALL_PATH}"
 
   if is_directory_exist "${dotfiles_cli_install_path}"; then
-    if is_dry_run; then
-      echo """
-      rm -rf ${dotfiles_cli_install_path}
-      """
-    else
-      rm -rf "${dotfiles_cli_install_path}"
-    fi
+    cmd_run "rm -rf ${dotfiles_cli_install_path}"
   fi
-
-  if is_dry_run; then
-    echo """
-    mkdir -p ${dotfiles_cli_install_path}
-    """
-  else
-    mkdir -p "${dotfiles_cli_install_path}"
-  fi
+  cmd_run "mkdir -p ${dotfiles_cli_install_path}"
 }
 
 main() {
   local dotfiles_cli_exec_bin_path=$(calculate_dotfiles_cli_exec_symlink_path)
-
-  clear_prevoius_installation
 
   if is_install_from_local_archive; then
     copy_local_archive_to_config_path

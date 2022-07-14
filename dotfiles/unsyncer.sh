@@ -49,7 +49,7 @@ _remove_symlinks_from_path() {
     elif is_file_has_name "${filename}" "bash" && shell_is_bash; then
       remove_symlink "${symlink_path}"
       log_indicator_good "Unlinked ${symlink_path}"
-    else
+    elif ! is_file_extension "${filename}" "zsh" && ! is_file_extension "${filename}" "bash"; then
       remove_symlink "${symlink_path}"
       log_indicator_good "Unlinked ${symlink_path}"
     fi

@@ -32,7 +32,7 @@ dotfiles_print_banner() {
 _create_symlinks_from_path_to_destination() {
   local files_path=$1
   local symlinks_destination=$2
-  local files_to_symlink=$(find "${files_path}" -name ".*" \
+  local files_to_symlink=$(find "${files_path}" \
     -name ".*" \
     -not -name ".gitignore" \
     -not -name ".travis.yml" \
@@ -52,29 +52,10 @@ _create_symlinks_from_path_to_destination() {
     elif is_file_extension "${filename}" "bash" && shell_is_bash; then
       create_symlink "${symlink_path}" "${file_path}"
       log_indicator_good "${symlink_path} --> ${file_path}"
-    else
+    elif ! is_file_extension "${filename}" "zsh" && ! is_file_extension "${filename}" "bash"; then
       create_symlink "${symlink_path}" "${file_path}"
       log_indicator_good "${symlink_path} --> ${file_path}"
     fi
-  done
-}
-
-_source_files_from_path() {
-  local files_path=$1
-  local files_to_source=$(find "${files_path}" -name ".*" \
-    -name ".*" \
-    -not -name ".gitignore" \
-    -not -name ".travis.yml" \
-    -not -name ".git" \
-    -not -name ".*.swp" \
-    -not -name ".gnupg" \
-    -not -name ".idea")
-
-  for file_path in ${files_to_source}; do
-    filename=$(basename "${file_path}")
-    # echo ${file_path}
-    source "${file_path}"
-    log_indicator_good "Sourced ${filename}"
   done
 }
 
@@ -84,18 +65,6 @@ syncer_create_shell_dir_symlinks() {
 
 syncer_create_home_dir_symlinks() {
   _create_symlinks_from_path_to_destination "${DOTFILES_REPO_SYNCER_HOME_PATH}" "${HOME}"
-}
-
-syncer_source_session_files() {
-  _source_files_from_path "${DOTFILES_REPO_SYNCER_SESSION_PATH}"
-}
-
-syncer_source_transient_files() {
-  _source_files_from_path "${DOTFILES_REPO_SYNCER_TRANSIENT_HOME_PATH}"
-}
-
-syncer_source_custom_files() {
-  _source_files_from_path "${DOTFILES_REPO_SYNCER_CUSTOM_PATH}"
 }
 
 run_sync_command() {
