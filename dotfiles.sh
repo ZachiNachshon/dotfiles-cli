@@ -79,8 +79,8 @@ print_cli_used_locations_and_exit() {
   echo -e """
 ${COLOR_WHITE}LOCATIONS${COLOR_NONE}:
 
-  ${COLOR_LIGHT_CYAN}Clone Path${COLOR_NONE}........: ${DOTFILES_REPO_LOCAL_PATH}
-  ${COLOR_LIGHT_CYAN}Global Binary${COLOR_NONE}.....: ${DOTFILES_CLI_INSTALL_PATH}
+  ${COLOR_LIGHT_CYAN}Dotfiles Clone Path${COLOR_NONE}........: ${DOTFILES_REPO_LOCAL_PATH}
+  ${COLOR_LIGHT_CYAN}CLI Global Binary${COLOR_NONE}..........: ${DOTFILES_CLI_INSTALL_PATH}
 
 ${COLOR_WHITE}HOMEBREW PATHS${COLOR_NONE}:
 

@@ -7,6 +7,7 @@
 
 source "${DOTFILES_CLI_INSTALL_PATH}/external/shell_scripts_lib/logger.sh"
 source "${DOTFILES_CLI_INSTALL_PATH}/external/shell_scripts_lib/io.sh"
+source "${DOTFILES_CLI_INSTALL_PATH}/external/shell_scripts_lib/cmd.sh"
 
 MAC_OS_SCRIPTS_FOLDER_PATH="${DOTFILES_REPO_LOCAL_PATH}/os/mac"
 
@@ -28,7 +29,7 @@ eval_mac_scripts() {
       f=$(basename ${file})
       new_line
       log_info "Running script. name: ${f}"
-      eval "${file}"
+      cmd_run "eval '${file}'"
       log_indicator_good "${f}"
     fi
   done
