@@ -3,8 +3,8 @@
 # Title         Sync files from the dotfiles repository
 # Author        Zachi Nachshon <zachi.nachshon@gmail.com>
 # Supported OS  Linux & macOS
-# Description   Create symlinks and source files from the dotfiles repository
-#               (options: home/session/shell/transient/custom/all)
+# Description   Create symlinks from the dotfiles repository
+#               (options: home/shell/all)
 #==============================================================================
 source "${DOTFILES_CLI_INSTALL_PATH}/external/shell_scripts_lib/logger.sh"
 source "${DOTFILES_CLI_INSTALL_PATH}/external/shell_scripts_lib/prompter.sh"
@@ -12,9 +12,6 @@ source "${DOTFILES_CLI_INSTALL_PATH}/external/shell_scripts_lib/io.sh"
 source "${DOTFILES_CLI_INSTALL_PATH}/external/shell_scripts_lib/strings.sh"
 source "${DOTFILES_CLI_INSTALL_PATH}/external/shell_scripts_lib/shell.sh"
 
-DOTFILES_REPO_SYNCER_TRANSIENT_HOME_PATH="${DOTFILES_REPO_LOCAL_PATH}/dotfiles/transient"
-DOTFILES_REPO_SYNCER_SESSION_PATH="${DOTFILES_REPO_LOCAL_PATH}/dotfiles/session"
-DOTFILES_REPO_SYNCER_CUSTOM_PATH="${DOTFILES_REPO_LOCAL_PATH}/dotfiles/custom"
 DOTFILES_REPO_SYNCER_HOME_PATH="${DOTFILES_REPO_LOCAL_PATH}/dotfiles/home"
 DOTFILES_REPO_SYNCER_SHELL_PATH="${DOTFILES_REPO_LOCAL_PATH}/dotfiles/shell"
 

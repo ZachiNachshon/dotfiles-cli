@@ -16,6 +16,7 @@ source "${DOTFILES_CLI_INSTALL_PATH}/dotfiles/syncer.sh"
 source "${DOTFILES_CLI_INSTALL_PATH}/dotfiles/unsyncer.sh"
 source "${DOTFILES_CLI_INSTALL_PATH}/os/mac/mac.sh"
 source "${DOTFILES_CLI_INSTALL_PATH}/os/linux/linux.sh"
+source "${DOTFILES_CLI_INSTALL_PATH}/plugins/plugins.sh"
 source "${DOTFILES_CLI_INSTALL_PATH}/external/shell_scripts_lib/logger.sh"
 source "${DOTFILES_CLI_INSTALL_PATH}/external/shell_scripts_lib/prompter.sh"
 source "${DOTFILES_CLI_INSTALL_PATH}/external/shell_scripts_lib/git.sh"
@@ -29,14 +30,16 @@ CLI_ARGUMENT_UNSYNC_COMMAND=""
 CLI_ARGUMENT_SYNC_REPO_DOTFILES=""
 CLI_ARGUMENT_BREW_COMMAND=""
 CLI_ARGUMENT_OS_COMMAND=""
+CLI_ARGUMENT_PLUGINS_COMMAND=""
 CLI_ARGUMENT_RELOAD_DOTFILES=""
-CLI_ARGUMENT_LOCATIONS=""
+CLI_ARGUMENT_CONFIG=""
 CLI_ARGUMENT_REPOSITORY=""
 CLI_ARGUMENT_VERSION=""
 
 CLI_VALUE_SYNC_OPTION=""
 CLI_VALUE_UNSYNC_OPTION=""
 CLI_VALUE_BREW_OPTION=""
+CLI_VALUE_PLUGINS_OPTION=""
 CLI_VALUE_OS_OPTION=""
 
 is_sync_dotfiles() {
@@ -55,6 +58,10 @@ is_brew_command() {
   [[ -n ${CLI_ARGUMENT_BREW_COMMAND} ]]
 }
 
+is_plugins_command() {
+  [[ -n ${CLI_ARGUMENT_PLUGINS_COMMAND} ]]
+}
+
 is_os_command() {
   [[ -n ${CLI_ARGUMENT_OS_COMMAND} ]]
 }
@@ -63,8 +70,8 @@ is_reload_dotfiles() {
   [[ -n ${CLI_ARGUMENT_RELOAD_DOTFILES} ]]
 }
 
-is_print_locations() {
-  [[ -n ${CLI_ARGUMENT_LOCATIONS} ]]
+is_print_config() {
+  [[ -n ${CLI_ARGUMENT_CONFIG} ]]
 }
 
 is_change_dir_to_dotfiles_repo() {
@@ -75,7 +82,17 @@ is_print_version() {
   [[ -n ${CLI_ARGUMENT_VERSION} ]]
 }
 
-print_cli_used_locations_and_exit() {
+print_empty_dotfiles_repo_folder() {
+  echo -e """
+${COLOR_YELLOW}Oops, seems like you forgot to clone a dotfiles repository.
+
+Please run the following command (change org & repo):${COLOR_NONE}
+
+  cd ${HOME}/.config && git clone https://github.com/ORGANIZATION/REPOSITORY.git 
+"""
+}
+
+print_config_and_exit() {
   echo -e """
 ${COLOR_WHITE}LOCATIONS${COLOR_NONE}:
 
@@ -96,8 +113,7 @@ ${COLOR_WHITE}HOMEBREW PATHS${COLOR_NONE}:
  
 ${COLOR_WHITE}ENV VARS${COLOR_NONE}:
 
-  ${COLOR_LIGHT_CYAN}TEST_ENV_VAR${COLOR_NONE}..: test
-"""
+  ${COLOR_LIGHT_CYAN}TEST_ENV_VAR${COLOR_NONE}..: test"""
   exit 0
 }
 
@@ -124,6 +140,11 @@ run_brew_command_and_exit() {
   exit 0
 }
 
+run_plugins_command_and_exit() {
+  run_plugins_command "${CLI_VALUE_PLUGINS_OPTION}"
+  exit 0
+}
+
 run_unsync_command_and_exit() {
   run_unsync_command "${CLI_VALUE_UNSYNC_OPTION}"
   exit 0
@@ -142,14 +163,14 @@ run_os_settings_command_and_exit() {
 
 change_dir_to_dotfiles_local_repo_and_exit() {
   if ! is_directory_exist "${DOTFILES_REPO_LOCAL_PATH}"; then
-    log_fatal "Invalid dotfiles directory, forgot to install/clone? path: ${DOTFILES_REPO_LOCAL_PATH}"
+    print_empty_dotfiles_repo_folder
+  else
+    log_info "Changing directory to ${DOTFILES_REPO_LOCAL_PATH}"  
+    cd "${DOTFILES_REPO_LOCAL_PATH}" || exit
+    # Read the following link to understand why we should use SHELL in here
+    # https://unix.stackexchange.com/a/278080
+    $SHELL
   fi
-
-  log_info "Changing directory to ${DOTFILES_REPO_LOCAL_PATH}"  
-  cd "${DOTFILES_REPO_LOCAL_PATH}" || exit
-  # Read the following link to understand why we should use SHELL in here
-  # https://unix.stackexchange.com/a/278080
-  $SHELL
   exit 0
 }
 
@@ -159,15 +180,16 @@ print_help_menu_and_exit() {
   echo -e "${SCRIPT_MENU_TITLE} - Manage a local development environment"
   echo -e " "
   echo -e "${COLOR_WHITE}USAGE${COLOR_NONE}"
-  echo -e "  "${base_exec_filename}" [command] [flag]"
+  echo -e "  "${base_exec_filename}" [command] [option] [flag]"
   echo -e " "
   echo -e "${COLOR_WHITE}AVAILABLE COMMANDS${COLOR_NONE}"
-  echo -e "  ${COLOR_LIGHT_CYAN}sync${COLOR_NONE} [option]             Sync dotfiles symlinks by catagory [${COLOR_GREEN}options: home/shell/all${COLOR_NONE}]"
-  echo -e "  ${COLOR_LIGHT_CYAN}unsync${COLOR_NONE} [option]           Unsync dotfiles symlinks by catagory [${COLOR_GREEN}options: home/shell/all${COLOR_NONE}]"
-  echo -e "  ${COLOR_LIGHT_CYAN}brew${COLOR_NONE} [option]             Update local brew components [${COLOR_GREEN}options: packages/casks/drivers/services/all${COLOR_NONE}]"
-  echo -e "  ${COLOR_LIGHT_CYAN}os${COLOR_NONE} [option]               Update OS settings and preferences [${COLOR_GREEN}options: mac/linux${COLOR_NONE}]"
+  echo -e "  ${COLOR_LIGHT_CYAN}sync${COLOR_NONE} <option>             Sync dotfiles symlinks by catagory [${COLOR_GREEN}options: home/shell/all${COLOR_NONE}]"
+  echo -e "  ${COLOR_LIGHT_CYAN}unsync${COLOR_NONE} <option>           Unsync dotfiles symlinks by catagory [${COLOR_GREEN}options: home/shell/all${COLOR_NONE}]"
+  echo -e "  ${COLOR_LIGHT_CYAN}brew${COLOR_NONE} <option>             Update local brew components [${COLOR_GREEN}options: packages/casks/drivers/services/all${COLOR_NONE}]"
+  echo -e "  ${COLOR_LIGHT_CYAN}os${COLOR_NONE} <option>               Update OS settings and preferences [${COLOR_GREEN}options: mac/linux${COLOR_NONE}]"
+  echo -e "  ${COLOR_LIGHT_CYAN}plugins${COLOR_NONE} <option>          Install plugins for specific shell [${COLOR_GREEN}options: bash/zsh${COLOR_NONE}]"
   echo -e "  ${COLOR_LIGHT_CYAN}reload${COLOR_NONE}                    Reload active shell session in order transient-session-custom"
-  echo -e "  ${COLOR_LIGHT_CYAN}locations${COLOR_NONE}                 Print locations used for config/repositories/symlinks/clone-path"
+  echo -e "  ${COLOR_LIGHT_CYAN}config${COLOR_NONE}                    Print config/paths/symlinks/clone-path"
   echo -e "  ${COLOR_LIGHT_CYAN}init${COLOR_NONE}                      Prompt for dotfiles git repo and perform a fresh clone"
   echo -e "  ${COLOR_LIGHT_CYAN}update${COLOR_NONE}                    Update or fresh clone the dotfiles repo and link afterwards"
   echo -e "  ${COLOR_LIGHT_CYAN}repo${COLOR_NONE}                      Change directory to the dotfiles local git repository"
@@ -216,6 +238,12 @@ parse_program_arguments() {
       CLI_VALUE_BREW_OPTION=$1
       shift
       ;;
+    plugins)
+      CLI_ARGUMENT_PLUGINS_COMMAND="plugins"
+      shift
+      CLI_VALUE_PLUGINS_OPTION=$1
+      shift
+      ;;
     os)
       CLI_ARGUMENT_OS_COMMAND="brew"
       shift
@@ -226,8 +254,8 @@ parse_program_arguments() {
       CLI_ARGUMENT_REPOSITORY="repo"
       shift
       ;;
-    locations)
-      CLI_ARGUMENT_LOCATIONS="locations"
+    config)
+      CLI_ARGUMENT_CONFIG="config"
       shift
       ;;
     version)
@@ -272,6 +300,9 @@ verify_program_arguments() {
   elif check_invalid_brew_command_value; then
     # Verify proper command args ordering: dotfiles brew casks --dry-run -v
     log_fatal "Command 'brew' is missing a mandatory option. options: packages/casks/drivers/services/all"
+  elif check_invalid_plugins_command_value; then
+    # Verify proper command args ordering: dotfiles plugins zsh --dry-run -v
+    log_fatal "Command 'plugins' is missing a mandatory option. options: bash/zsh"
   elif check_invalid_os_command_value; then
     # Verify proper command args ordering: dotfiles os mac --dry-run -v
     log_fatal "Command 'os' is missing a mandatory option. options: mac/linux"
@@ -313,6 +344,16 @@ check_invalid_brew_command_value() {
     "${CLI_VALUE_BREW_OPTION}" != "all") ]]
 }
 
+check_invalid_plugins_command_value() {
+  # If plugins command is not empty and its value is empty or a flag - not valid
+  [[ -n "${CLI_ARGUMENT_PLUGINS_COMMAND}" && (-z "${CLI_VALUE_PLUGINS_OPTION}" || "${CLI_VALUE_PLUGINS_OPTION}" == -*) ]] \
+  || \
+  # If plugins options are not part of the valid values
+  [[ -n "${CLI_ARGUMENT_PLUGINS_COMMAND}" && ( \
+    "${CLI_VALUE_PLUGINS_OPTION}" != "bash" && \
+    "${CLI_VALUE_PLUGINS_OPTION}" != "zsh") ]]
+}
+
 check_invalid_os_command_value() {
   # If brew command is not empty and its value is empty or a flag - not valid
   [[ -n "${CLI_ARGUMENT_OS_COMMAND}" && (-z "${CLI_VALUE_OS_OPTION}" || "${CLI_VALUE_OS_OPTION}" == -*) ]] \
@@ -335,13 +376,14 @@ main() {
     change_dir_to_dotfiles_local_repo_and_exit
   fi
 
-  if is_print_locations; then
-    print_cli_used_locations_and_exit
+  if is_print_config; then
+    print_config_and_exit
   fi
 
   if is_sync_dotfiles; then
     if run_sync_command "${CLI_VALUE_SYNC_OPTION}"; then
       # Reload shell session only on successful sync
+      new_line
       reload_active_shell_session_and_exit
     fi
   fi
@@ -352,6 +394,10 @@ main() {
 
   if is_brew_command; then
     run_brew_command_and_exit
+  fi
+
+  if is_plugins_command; then
+    run_plugins_command_and_exit
   fi
 
   if is_os_command; then

@@ -23,16 +23,23 @@ os_mac_print_banner() {
 }
 
 eval_mac_scripts() {
-  log_info "Running macOS scripts. path: ${MAC_OS_SCRIPTS_FOLDER_PATH}"
-  for file in ${MAC_OS_SCRIPTS_FOLDER_PATH}/*; do
-    if is_file_exist "${file}"; then
-      f=$(basename ${file})
-      new_line
-      log_info "Running script. name: ${f}"
-      cmd_run "eval '${file}'"
-      log_indicator_good "${f}"
-    fi
-  done
+  if is_directory_empty "${MAC_OS_SCRIPTS_FOLDER_PATH}"; then
+    log_warning "No macOS scripts were found."
+  else
+    log_info "Running macOS scripts. path: ${MAC_OS_SCRIPTS_FOLDER_PATH}"
+    new_line
+
+    for file in ${MAC_OS_SCRIPTS_FOLDER_PATH}/*; do
+      if is_file_exist "${file}"; then
+        f=$(basename ${file})
+        cmd_run "eval '${file}'"
+        log_indicator_good "${f}"
+      fi
+    done
+
+    new_line
+    log_info "Settings for macOS were applied successfully, ${COLOR_YELLOW}RESTART IS REQUIRED${COLOR_NONE}."
+  fi
 }
 
 run_os_mac_settings_command() {
@@ -42,9 +49,6 @@ run_os_mac_settings_command() {
 
     new_line
     eval_mac_scripts
-
-    new_line
-    log_info "Settings for macOS were applied successfully, ${COLOR_YELLOW}RESTART IS REQUIRED${COLOR_NONE}."
 
   else
     log_info "Nothing was changed."
