@@ -76,7 +76,8 @@ is_print_version() {
 }
 
 print_cli_used_locations_and_exit() {
-  echo -e """${COLOR_WHITE}LOCATIONS${COLOR_NONE}:
+  echo -e """
+${COLOR_WHITE}LOCATIONS${COLOR_NONE}:
 
   ${COLOR_LIGHT_CYAN}Clone Path${COLOR_NONE}........: ${DOTFILES_REPO_LOCAL_PATH}
   ${COLOR_LIGHT_CYAN}Global Binary${COLOR_NONE}.....: ${DOTFILES_CLI_INSTALL_PATH}
@@ -161,11 +162,11 @@ print_help_menu_and_exit() {
   echo -e "  "${base_exec_filename}" [command] [flag]"
   echo -e " "
   echo -e "${COLOR_WHITE}AVAILABLE COMMANDS${COLOR_NONE}"
-  echo -e "  ${COLOR_LIGHT_CYAN}sync${COLOR_NONE} [option]             Sync and source dotfiles by catagory (options: home/session/shell/transient/custom/all)"
-  echo -e "  ${COLOR_LIGHT_CYAN}unsync${COLOR_NONE} [option]           Unsync dotfiles symlinks by catagory (options: home/shell/all)"
-  echo -e "  ${COLOR_LIGHT_CYAN}brew${COLOR_NONE} [option]             Update local brew components (options: packages/casks/drivers/services/all)"
-  echo -e "  ${COLOR_LIGHT_CYAN}os${COLOR_NONE} [option]               Update OS settings and preferences (options: mac/linux)"
-  echo -e "  ${COLOR_LIGHT_CYAN}reload${COLOR_NONE}                    Reload active shell session"
+  echo -e "  ${COLOR_LIGHT_CYAN}sync${COLOR_NONE} [option]             Sync dotfiles symlinks by catagory [${COLOR_GREEN}options: home/shell/all${COLOR_NONE}]"
+  echo -e "  ${COLOR_LIGHT_CYAN}unsync${COLOR_NONE} [option]           Unsync dotfiles symlinks by catagory [${COLOR_GREEN}options: home/shell/all${COLOR_NONE}]"
+  echo -e "  ${COLOR_LIGHT_CYAN}brew${COLOR_NONE} [option]             Update local brew components [${COLOR_GREEN}options: packages/casks/drivers/services/all${COLOR_NONE}]"
+  echo -e "  ${COLOR_LIGHT_CYAN}os${COLOR_NONE} [option]               Update OS settings and preferences [${COLOR_GREEN}options: mac/linux${COLOR_NONE}]"
+  echo -e "  ${COLOR_LIGHT_CYAN}reload${COLOR_NONE}                    Reload active shell session in order transient-session-custom"
   echo -e "  ${COLOR_LIGHT_CYAN}locations${COLOR_NONE}                 Print locations used for config/repositories/symlinks/clone-path"
   echo -e "  ${COLOR_LIGHT_CYAN}init${COLOR_NONE}                      Prompt for dotfiles git repo and perform a fresh clone"
   echo -e "  ${COLOR_LIGHT_CYAN}update${COLOR_NONE}                    Update or fresh clone the dotfiles repo and link afterwards"
@@ -264,7 +265,7 @@ parse_program_arguments() {
 verify_program_arguments() {
   if check_invalid_sync_command_value; then
     # Verify proper command args ordering: dotfiles sync all --dry-run -v
-    log_fatal "Command 'sync' is missing a mandatory option. options: home/session/shell/transient/custom/all"
+    log_fatal "Command 'sync' is missing a mandatory option. options: home/shell/all"
   elif check_invalid_unsync_command_value; then
     # Verify proper command args ordering: dotfiles unsync shell --dry-run -v
     log_fatal "Command 'unsync' is missing a mandatory option. options: home/shell/all"
@@ -278,23 +279,48 @@ verify_program_arguments() {
 }
 
 check_invalid_sync_command_value() {
-  # If sync command is not empty and its value is a flag - not valid
-  [[ -n "${CLI_ARGUMENT_SYNC_COMMAND}" && (-z "${CLI_VALUE_SYNC_OPTION}" || "${CLI_VALUE_SYNC_OPTION}" == -*) ]]
+  # If sync command is not empty and its value is empty or a flag - not valid
+  [[ -n "${CLI_ARGUMENT_SYNC_COMMAND}" && (-z "${CLI_VALUE_SYNC_OPTION}" || "${CLI_VALUE_SYNC_OPTION}" == -*) ]] \
+  || \
+  # If sync options are not part of the valid values
+  [[ -n "${CLI_ARGUMENT_SYNC_COMMAND}" && ( \
+    "${CLI_VALUE_SYNC_OPTION}" != "home" && \
+    "${CLI_VALUE_SYNC_OPTION}" != "shell" && \
+    "${CLI_VALUE_SYNC_OPTION}" != "all") ]]
 }
 
 check_invalid_unsync_command_value() {
-  # If unsync command is not empty and its value is a flag - not valid
-  [[ -n "${CLI_ARGUMENT_UNSYNC_COMMAND}" && (-z "${CLI_VALUE_UNSYNC_OPTION}" || "${CLI_VALUE_UNSYNC_OPTION}" == -*) ]]
+  # If unsync command is not empty and its value is empty or a flag - not valid
+  [[ -n "${CLI_ARGUMENT_UNSYNC_COMMAND}" && (-z "${CLI_VALUE_UNSYNC_OPTION}" || "${CLI_VALUE_UNSYNC_OPTION}" == -*) ]] \
+  || \
+  # If unsync options are not part of the valid values
+  [[ -n "${CLI_ARGUMENT_UNSYNC_COMMAND}" && ( \
+    "${CLI_VALUE_UNSYNC_OPTION}" != "home" && \
+    "${CLI_VALUE_UNSYNC_OPTION}" != "shell" && \
+    "${CLI_VALUE_UNSYNC_OPTION}" != "all") ]]
 }
 
 check_invalid_brew_command_value() {
-  # If brew command is not empty and its value is a flag - not valid
-  [[ -n "${CLI_ARGUMENT_BREW_COMMAND}" && (-z "${CLI_VALUE_BREW_OPTION}" || "${CLI_VALUE_BREW_OPTION}" == -*) ]]
+  # If brew command is not empty and its value is empty or a flag - not valid
+  [[ -n "${CLI_ARGUMENT_BREW_COMMAND}" && (-z "${CLI_VALUE_BREW_OPTION}" || "${CLI_VALUE_BREW_OPTION}" == -*) ]] \
+  || \
+  # If brew options are not part of the valid values
+  [[ -n "${CLI_ARGUMENT_BREW_COMMAND}" && ( \
+    "${CLI_VALUE_BREW_OPTION}" != "package" && \
+    "${CLI_VALUE_BREW_OPTION}" != "casks" && \
+    "${CLI_VALUE_BREW_OPTION}" != "drivers" && \
+    "${CLI_VALUE_BREW_OPTION}" != "services" && \
+    "${CLI_VALUE_BREW_OPTION}" != "all") ]]
 }
 
 check_invalid_os_command_value() {
-  # If brew command is not empty and its value is a flag - not valid
-  [[ -n "${CLI_ARGUMENT_OS_COMMAND}" && (-z "${CLI_VALUE_OS_OPTION}" || "${CLI_VALUE_OS_OPTION}" == -*) ]]
+  # If brew command is not empty and its value is empty or a flag - not valid
+  [[ -n "${CLI_ARGUMENT_OS_COMMAND}" && (-z "${CLI_VALUE_OS_OPTION}" || "${CLI_VALUE_OS_OPTION}" == -*) ]] \
+  || \
+  # If os options are not part of the valid values
+  [[ -n "${CLI_ARGUMENT_OS_COMMAND}" && ( \
+    "${CLI_VALUE_OS_OPTION}" != "mac" && \
+    "${CLI_VALUE_OS_OPTION}" != "linux") ]]
 }
 
 main() {
@@ -314,8 +340,10 @@ main() {
   fi
 
   if is_sync_dotfiles; then
-    run_sync_command "${CLI_VALUE_SYNC_OPTION}"
-    reload_active_shell_session_and_exit
+    if run_sync_command "${CLI_VALUE_SYNC_OPTION}"; then
+      # Reload shell session only on successful sync
+      reload_active_shell_session_and_exit
+    fi
   fi
 
   if is_unsync_dotfiles; then

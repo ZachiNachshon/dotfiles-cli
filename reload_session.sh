@@ -26,11 +26,11 @@ is_debug() {
 }
 
 is_silent() {
-  # Execution from shell RC files controls env var LOGGER_SILENT
-  # Execution from dotfiles CLI controls env var DOTFILES_CLI_SILENT_OPTION
   if [[ -n ${DOTFILES_CLI_SILENT_OPTION} ]]; then
+    # Execution from dotfiles CLI controls env var DOTFILES_CLI_SILENT_OPTION
     [[ ${DOTFILES_CLI_SILENT_OPTION} == "True" ]]  
   else
+    # Execution from shell RC files controls env var LOGGER_SILENT
     [[ -n ${LOGGER_SILENT} ]]
   fi
 }

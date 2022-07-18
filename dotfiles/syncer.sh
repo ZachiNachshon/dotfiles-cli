@@ -68,30 +68,16 @@ syncer_create_home_dir_symlinks() {
 }
 
 run_sync_command() {
-  # home/session/shell/transient/custom/all
+  # home/shell/all
   local dotfiles_option=$1
 
   dotfiles_print_banner
 
-  if [[ $(prompt_yes_no "Sync and source dotfiles" "warning") == "y" ]]; then
+  if [[ $(prompt_yes_no "Sync '${dotfiles_option}' dotfiles and reload session" "warning") == "y" ]]; then
 
     if [[ "${dotfiles_option}" == "home" || "${dotfiles_option}" == "all" ]]; then
       new_line
       syncer_create_home_dir_symlinks
-    fi
-
-    if [[ "${dotfiles_option}" == "transient" || "${dotfiles_option}" == "all" ]]; then
-      syncer_source_transient_files
-    fi
-
-    if [[ "${dotfiles_option}" == "session" || "${dotfiles_option}" == "all" ]]; then
-      new_line
-      syncer_source_session_files
-    fi
-
-    if [[ "${dotfiles_option}" == "custom" || "${dotfiles_option}" == "all" ]]; then
-      new_line
-      syncer_source_custom_files
     fi
 
     if [[ "${dotfiles_option}" == "shell" || "${dotfiles_option}" == "all" ]]; then
@@ -101,9 +87,12 @@ run_sync_command() {
 
     new_line
     log_info "Dotfiles were synced successfully"
-    
+    return 0
+
   else
     new_line
     log_info "Nothing was synced."
   fi
+
+  return 1
 }

@@ -138,7 +138,7 @@ run_homebrew_command() {
 
   brew_print_banner
 
-  if [[ $(prompt_yes_no "Install/Upgrade Homebrew components" "warning") == "y" ]]; then
+  if [[ $(prompt_yes_no "Install/Upgrade '${brew_option}' Homebrew components" "warning") == "y" ]]; then
     new_line
     brew_verify_and_install_homebrew
     brew_install_homebrew_taps

@@ -70,7 +70,7 @@ run_unsync_command() {
 
   dotfiles_print_banner
 
-  if [[ $(prompt_yes_no "Unsync dotfiles" "warning") == "y" ]]; then
+  if [[ $(prompt_yes_no "Unsync '${dotfiles_option} dotfiles" "warning") == "y" ]]; then
 
     if [[ "${dotfiles_option}" == "home" || "${dotfiles_option}" == "all" ]]; then
       new_line
