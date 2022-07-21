@@ -74,11 +74,13 @@ run_sync_command() {
 
     if [[ "${dotfiles_option}" == "home" || "${dotfiles_option}" == "all" ]]; then
       new_line
+      log_info "Syncing home dotfiles"
       syncer_create_home_dir_symlinks
     fi
 
     if [[ "${dotfiles_option}" == "shell" || "${dotfiles_option}" == "all" ]]; then
       new_line
+      log_info "Syncing shell dotfiles"
       syncer_create_shell_dir_symlinks
     fi
 
