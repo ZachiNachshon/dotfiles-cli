@@ -237,7 +237,7 @@ change_dir_to_dotfiles_local_repo_and_exit() {
     cd "${DOTFILES_REPO_LOCAL_PATH}" || exit
     # Read the following link to understand why we should use SHELL in here
     # https://unix.stackexchange.com/a/278080
-    $SHELL
+    (export DOTFILES_CLI_SILENT_OPTION="True" && $SHELL)
   fi
   exit 0
 }
@@ -458,7 +458,7 @@ main() {
   if is_sync_dotfiles; then
     if run_sync_command "${CLI_VALUE_SYNC_OPTION}"; then
       # Reload shell session only on successful sync
-      log_info "Reloading active shell session"
+      log_info "Reloading active shell"
       new_line
       reload_active_shell_session_and_exit
     fi
