@@ -90,12 +90,14 @@ is_print_version() {
 
 print_empty_dotfiles_repo_folder() {
   echo -e """
-${COLOR_YELLOW}Oops, seems like you forgot to clone a dotfiles repository.
+${COLOR_YELLOW}Oops, seems like you forgot to link a dotfiles repository.
 
 Please run the following command (change org & repo):${COLOR_NONE}
 
-  mkdir -p ${HOME}/.config; \
-  cd ${HOME}/.config && git clone https://github.com/ORGANIZATION/REPOSITORY.git 
+  dotfiles link https://github.com/ORGANIZATION/REPOSITORY.git 
+
+  #mkdir -p ${HOME}/.config; \
+  #cd ${HOME}/.config && git clone https://github.com/ORGANIZATION/REPOSITORY.git 
 """
 }
 
@@ -103,14 +105,14 @@ print_config_and_exit() {
   echo -e """
 ${COLOR_WHITE}GENERAL INFO${COLOR_NONE}:
 
-  ${COLOR_LIGHT_CYAN}Operating System${COLOR_NONE}....: $(read_os_type)
-  ${COLOR_LIGHT_CYAN}Architecture${COLOR_NONE}........: $(read_arch "x86_64:amd64" "armv:arm")
-  ${COLOR_LIGHT_CYAN}Shell${COLOR_NONE}...............: $(shell_get_name)
+  ${COLOR_LIGHT_CYAN}Operating System${COLOR_NONE}...: $(read_os_type)
+  ${COLOR_LIGHT_CYAN}Architecture${COLOR_NONE}.......: $(read_arch "x86_64:amd64" "armv:arm")
+  ${COLOR_LIGHT_CYAN}Shell${COLOR_NONE}..............: $(shell_get_name)
 
 ${COLOR_WHITE}LOCATIONS${COLOR_NONE}:
 
-  ${COLOR_LIGHT_CYAN}Dotfiles Clone Path${COLOR_NONE}........: ${DOTFILES_REPO_LOCAL_PATH}
-  ${COLOR_LIGHT_CYAN}CLI Global Binary${COLOR_NONE}..........: ${DOTFILES_CLI_INSTALL_PATH}
+  ${COLOR_LIGHT_CYAN}Dotfiles Clone Path${COLOR_NONE}...: ${DOTFILES_REPO_LOCAL_PATH}
+  ${COLOR_LIGHT_CYAN}CLI Global Binary${COLOR_NONE}.....: ${DOTFILES_CLI_INSTALL_PATH}
 
 ${COLOR_WHITE}HOMEBREW PATHS${COLOR_NONE}:
 
@@ -123,10 +125,25 @@ ${COLOR_WHITE}HOMEBREW PATHS${COLOR_NONE}:
   ${COLOR_LIGHT_CYAN}Dotfiles Brew Casks${COLOR_NONE}......: ${DOTFILES_REPO_LOCAL_PATH}/brew/casks.txt
   ${COLOR_LIGHT_CYAN}Dotfiles Brew Drivers${COLOR_NONE}....: ${DOTFILES_REPO_LOCAL_PATH}/brew/drivers.txt
   ${COLOR_LIGHT_CYAN}Dotfiles Brew Services${COLOR_NONE}...: ${DOTFILES_REPO_LOCAL_PATH}/brew/services.txt
- 
-${COLOR_WHITE}ENV VARS${COLOR_NONE}:
 
-  ${COLOR_LIGHT_CYAN}TEST_ENV_VAR${COLOR_NONE}..: test"""
+${COLOR_WHITE}DOTFILES PATHS${COLOR_NONE}:
+
+  ${COLOR_LIGHT_CYAN}Dotfiles Home files${COLOR_NONE}........: ${DOTFILES_REPO_LOCAL_PATH}/dotfiles/home
+  ${COLOR_LIGHT_CYAN}Dotfiles Shell files${COLOR_NONE}.......: ${DOTFILES_REPO_LOCAL_PATH}/dotfiles/shell
+  ${COLOR_LIGHT_CYAN}Dotfiles Session files${COLOR_NONE}.....: ${DOTFILES_REPO_LOCAL_PATH}/dotfiles/session
+  ${COLOR_LIGHT_CYAN}Dotfiles Transient files${COLOR_NONE}...: ${DOTFILES_REPO_LOCAL_PATH}/dotfiles/transient
+  ${COLOR_LIGHT_CYAN}Dotfiles Custom files${COLOR_NONE}......: ${DOTFILES_REPO_LOCAL_PATH}/dotfiles/custom
+
+${COLOR_WHITE}OS PATHS${COLOR_NONE}:
+
+  ${COLOR_LIGHT_CYAN}Linux${COLOR_NONE}...: ${DOTFILES_REPO_LOCAL_PATH}/os/linux
+  ${COLOR_LIGHT_CYAN}macOS${COLOR_NONE}...: ${DOTFILES_REPO_LOCAL_PATH}/os/mac
+
+${COLOR_WHITE}SHELL PLUGINS${COLOR_NONE}:
+
+  ${COLOR_LIGHT_CYAN}zsh${COLOR_NONE}....: ${DOTFILES_REPO_LOCAL_PATH}/plugins/zsh
+  ${COLOR_LIGHT_CYAN}bash${COLOR_NONE}...: ${DOTFILES_REPO_LOCAL_PATH}/plugins/bash
+"""
 
   exit 0
 }
@@ -137,7 +154,7 @@ This is the expected dotfiles repository structure to properly integrate with th
 
 .
 ├── ...${COLOR_LIGHT_CYAN}
-├── brew                        # Homebrew components, items on each file should be separated by new line
+├── brew                        # Homebrew components, items on each file should be separated by a new line
 │   ├── casks.txt
 │   ├── drivers.txt
 │   ├── packages.txt
@@ -165,8 +182,8 @@ ${COLOR_YELLOW}│
 │   ├── linux                   # Scripts to configure Linux settings and preferences
 │   │   ├── key_bindings.sh
 │   │   └── ...
-│   └── mac
-│       ├── finder_settings.sh  # Scripts to configure macOS settings and preferences
+│   └── mac                     # Scripts to configure macOS settings and preferences
+│       ├── finder_settings.sh  
 │       └── ...${COLOR_NONE}
 ${COLOR_PURPLE}│
 ├── plugins
@@ -245,6 +262,7 @@ change_dir_to_dotfiles_local_repo_and_exit() {
 print_help_menu_and_exit() {
   local exec_filename=$1
   local base_exec_filename=$(basename "${exec_filename}")
+  echo -e ""
   echo -e "${SCRIPT_MENU_TITLE} - Manage a local development environment"
   echo -e " "
   echo -e "${COLOR_WHITE}USAGE${COLOR_NONE}"
@@ -256,7 +274,7 @@ print_help_menu_and_exit() {
   echo -e "  ${COLOR_LIGHT_CYAN}brew${COLOR_NONE} <option>             Update local brew components [${COLOR_GREEN}options: packages/casks/drivers/services/all${COLOR_NONE}]"
   echo -e "  ${COLOR_LIGHT_CYAN}os${COLOR_NONE} <option>               Update OS settings and preferences [${COLOR_GREEN}options: mac/linux${COLOR_NONE}]"
   echo -e "  ${COLOR_LIGHT_CYAN}plugins${COLOR_NONE} <option>          Install plugins for specific shell [${COLOR_GREEN}options: bash/zsh${COLOR_NONE}]"
-  echo -e "  ${COLOR_LIGHT_CYAN}reload${COLOR_NONE}                    Reload active shell session in order transient-session-custom"
+  echo -e "  ${COLOR_LIGHT_CYAN}reload${COLOR_NONE}                    Reload active shell session by order: transient-session-custom"
   echo -e "  ${COLOR_LIGHT_CYAN}config${COLOR_NONE}                    Print config/paths/symlinks/clone-path"
   echo -e "  ${COLOR_LIGHT_CYAN}structure${COLOR_NONE}                 Print the dotfiles repository expected structure"
   echo -e "  ${COLOR_LIGHT_CYAN}repo${COLOR_NONE}                      Change directory to the dotfiles local git repository"
@@ -266,8 +284,8 @@ print_help_menu_and_exit() {
   echo -e "  ${COLOR_LIGHT_CYAN}--dry-run${COLOR_NONE}                 Run all commands in dry-run mode without file system changes"
   echo -e "  ${COLOR_LIGHT_CYAN}-y${COLOR_NONE}                        Do not prompt for approval and accept everything"
   echo -e "  ${COLOR_LIGHT_CYAN}-h${COLOR_NONE} (--help)               Show available actions and their description"
-  echo -e "  ${COLOR_LIGHT_CYAN}-v${COLOR_NONE} (--verbose)            Output debug logs for deps-syncer client commands executions"
-  echo -e "  ${COLOR_LIGHT_CYAN}-s${COLOR_NONE} (--silent)             Do not output logs for deps-syncer client commands executions"
+  echo -e "  ${COLOR_LIGHT_CYAN}-v${COLOR_NONE} (--verbose)            Output debug logs for commands executions"
+  echo -e "  ${COLOR_LIGHT_CYAN}-s${COLOR_NONE} (--silent)             Do not output logs for commands executions"
   echo -e " "
   exit 0
 }
@@ -408,7 +426,7 @@ check_invalid_brew_command_value() {
   || \
   # If brew options are not part of the valid values
   [[ -n "${CLI_ARGUMENT_BREW_COMMAND}" && ( \
-    "${CLI_VALUE_BREW_OPTION}" != "package" && \
+    "${CLI_VALUE_BREW_OPTION}" != "packages" && \
     "${CLI_VALUE_BREW_OPTION}" != "casks" && \
     "${CLI_VALUE_BREW_OPTION}" != "drivers" && \
     "${CLI_VALUE_BREW_OPTION}" != "services" && \

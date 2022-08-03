@@ -1,6 +1,6 @@
 ---
 name: Feature request
-about: Suggest a new feature to the git-deps-syncer project
+about: Suggest a new feature to the dotfiles-cli project
 title: ''
 labels: ''
 assignees: ''

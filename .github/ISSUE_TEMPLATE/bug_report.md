@@ -16,7 +16,7 @@ assignees: ''
 **Anything else need to know?**:
 
 **Environment**:
-- git-deps-syncer version (use `git-deps-syncer version`):
+- dotfiles-cli version (use `dotfiles version`):
 - OS:
 - Other:
 
