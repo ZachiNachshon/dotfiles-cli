@@ -1,0 +1,66 @@
+name: Docs-Site
+
+# Instructions in here - https://gohugo.io/hosting-and-deployment/hosting-on-github/
+
+# The GitHub Actions used in these instructions pull source content from the
+# master branch and then commit the generated content to the gh-pages branch.
+# This applies regardless of what type of GitHub Pages you are using.
+# This is a clean setup as your Hugo files are stored in one branch and
+# your generated files are published into a separate branch.
+
+on:
+  push:
+    branches:
+      - master  # Set a branch to deploy
+    paths:
+      - '.github/workflows/docs-site.yaml'
+      - 'docs-site/**'
+
+  pull_request:
+    branches:
+      - master
+
+env:
+  FORCE_COLOR: 2
+  NODE: 16
+
+jobs:
+  deploy:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: true  # Fetch Hugo themes (true OR recursive)
+          fetch-depth: 0    # Fetch all history for .GitInfo and .Lastmod
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "${{ env.NODE }}"
+          cache: npm
+          cache-dependency-path: ./docs-site/package-lock.json
+
+      - name: Setup Hugo
+        uses: peaceiris/actions-hugo@v2
+        with:
+          hugo-version: '0.86.0'
+          extended: true
+
+      - name: Install postcss-cli
+        working-directory: ./docs-site
+        run: npm install postcss-cli
+
+      - name: Build docs
+        working-directory: ./docs-site
+        run: hugo --cleanDestinationDir
+
+#      - name: List files
+#        working-directory: ./docs-site
+#        run: ls -lah
+
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        if: github.ref == 'refs/heads/master'
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./docs-site/_site
