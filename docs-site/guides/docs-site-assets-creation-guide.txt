@@ -1,0 +1,63 @@
+Assets preferences:
+
+Bootstrap Icons:
+----------------
+Get the SVG HTML from - https://icons.getbootstrap.com/icons/controller/
+Add to - docs-site/site/layouts/partials/icons.html
+
+Code/Terminal Snippets (https://carbon.now.sh/)
+-----------------------------------------------
+Theme: material
+Font: Plain Text / bold
+Highlight color: #E93927
+
+Favicon (https://favicon.io/)
+-----------------------------
+Background: Rounded
+Font Family: Aladin
+Font Variant: Regular 400 Normal
+Font Size: 110
+
+Dotfiles-CLI:
+Font Color - #FFFFFF
+Background Color - #3297F2
+
+
+Logo (https://maketext.io/)
+---------------------------
+Font: Pacifico
+Font Size: 200
+Background: rgba(0%,0%,0%,0)
+
+White (project-white-nav and project-white-footer):
+Fill - #ffffff
+Extrusion - #3297F2
+Shadow - #3297F2
+Offset - 4
+
+Themed (project-name):
+Fill - #3297F2
+Extrusion - #ffffff
+Shadow - #3297F2
+Offset - 4
+
+
+Social Image:
+-------------
+Take a screenshot from the main docs page (masthead)
+Refine edges using
+ - https://onlinepngtools.com/refine-png-edges
+Export as PNG and save as xxx-social.png
+
+
+Social Logo (https://maketext.io/):
+-----------------------------------
+Font: Aladin
+Font Size: 200
+Background: rgba(0%,0%,0%,0)
+
+Colors: Themed colors
+Font: Aladin
+
+Type the initial letter of the product i.e "G" for Dotfiles-CLI
+Export as PNG and save as xxx-social-logo.png
