@@ -48,7 +48,7 @@ module:
       target:           static/favicon.ico
 
 params:
-  description:          "Sync git repositories as external source dependencies."
+  description:          "CLI utility for managing a remote dotfiles repository."
   authors:              "Zachi Nachshon"
   social_image_path:    /docs/latest/assets/brand/dotfiles-cli-social.png
   social_logo_path:     /docs/latest/assets/brand/dotfiles-cli-social-logo.png

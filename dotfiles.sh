@@ -7,11 +7,13 @@
 #               having scattered load commands on shell-rc file(s).
 #==============================================================================
 
-# DOTFILES_CLI_INSTALL_PATH="$HOME/.config/dotfiles-cli"
+CONFIG_FOLDER_PATH="${HOME}/.config"
+# DOTFILES_CLI_INSTALL_PATH="${CONFIG_FOLDER_PATH}/dotfiles-cli"
 DOTFILES_CLI_INSTALL_PATH="${HOME}/codebase/github/dotfiles-cli"
-DOTFILES_REPO_LOCAL_PATH="${HOME}/.config/dotfiles"
+DOTFILES_REPO_LOCAL_PATH="${CONFIG_FOLDER_PATH}/dotfiles"
 
 source "${DOTFILES_CLI_INSTALL_PATH}/brew/brew.sh"
+source "${DOTFILES_CLI_INSTALL_PATH}/linker/linker.sh"
 source "${DOTFILES_CLI_INSTALL_PATH}/dotfiles/syncer.sh"
 source "${DOTFILES_CLI_INSTALL_PATH}/dotfiles/unsyncer.sh"
 source "${DOTFILES_CLI_INSTALL_PATH}/os/mac/mac.sh"
@@ -36,6 +38,7 @@ CLI_ARGUMENT_RELOAD_DOTFILES=""
 CLI_ARGUMENT_CONFIG=""
 CLI_ARGUMENT_STRUCTURE=""
 CLI_ARGUMENT_REPOSITORY=""
+CLI_ARGUMENT_LINK_COMMAND=""
 CLI_ARGUMENT_VERSION=""
 
 CLI_VALUE_SYNC_OPTION=""
@@ -43,6 +46,8 @@ CLI_VALUE_UNSYNC_OPTION=""
 CLI_VALUE_BREW_OPTION=""
 CLI_VALUE_PLUGINS_OPTION=""
 CLI_VALUE_OS_OPTION=""
+CLI_VALUE_LINK_CLONE_URL=""
+CLI_VALUE_LINK_BRANCH=""
 
 is_sync_dotfiles() {
   [[ -n ${CLI_ARGUMENT_SYNC_COMMAND} ]]
@@ -82,6 +87,10 @@ is_print_structure() {
 
 is_change_dir_to_dotfiles_repo() {
   [[ -n ${CLI_ARGUMENT_REPOSITORY} ]]
+}
+
+is_link_command() {
+  [[ -n ${CLI_ARGUMENT_LINK_COMMAND} ]]
 }
 
 is_print_version() {
@@ -241,8 +250,13 @@ run_os_settings_command_and_exit() {
   elif [[ "${CLI_VALUE_OS_OPTION}" == "linux" ]]; then
     run_os_linux_settings_command
   else
-    log_fatal "Option not supoprted. value: ${CLI_VALUE_OS_OPTION}"
+    log_fatal "Option not supported. value: ${CLI_VALUE_OS_OPTION}"
   fi
+  exit 0
+}
+
+run_link_command_and_exit() {
+  run_link_command "${CLI_VALUE_LINK_CLONE_URL}" "${CLI_VALUE_LINK_BRANCH}"
   exit 0
 }
 
@@ -278,6 +292,7 @@ print_help_menu_and_exit() {
   echo -e "  ${COLOR_LIGHT_CYAN}config${COLOR_NONE}                    Print config/paths/symlinks/clone-path"
   echo -e "  ${COLOR_LIGHT_CYAN}structure${COLOR_NONE}                 Print the dotfiles repository expected structure"
   echo -e "  ${COLOR_LIGHT_CYAN}repo${COLOR_NONE}                      Change directory to the dotfiles local git repository"
+  echo -e "  ${COLOR_LIGHT_CYAN}link${COLOR_NONE} <url> <branch>       Clone and link a remote dotfiles repository ${COLOR_GREEN}(default branch: master)${COLOR_NONE}"
   echo -e "  ${COLOR_LIGHT_CYAN}version${COLOR_NONE}                   Print dotfiles client commit-hash"
   echo -e " "
   echo -e "${COLOR_WHITE}FLAGS${COLOR_NONE}"
@@ -347,6 +362,17 @@ parse_program_arguments() {
       CLI_ARGUMENT_STRUCTURE="structure"
       shift
       ;;
+    link)
+      CLI_ARGUMENT_LINK_COMMAND="link"
+      shift
+      CLI_VALUE_LINK_CLONE_URL=$1
+      shift
+      # If the following argument is not a flag, it must be branch
+      if [[ "$1" != -* ]]; then
+        CLI_VALUE_LINK_BRANCH=$1
+        shift
+      fi
+      ;;
     version)
       CLI_ARGUMENT_VERSION="version"
       shift
@@ -395,6 +421,9 @@ verify_program_arguments() {
   elif check_invalid_os_command_value; then
     # Verify proper command args ordering: dotfiles os mac --dry-run -v
     log_fatal "Command 'os' is missing a mandatory option. options: mac/linux"
+  elif check_invalid_link_command_value; then
+    # Verify proper command args ordering: dotfiles link os mac --dry-run -v
+    log_fatal "Command 'link' is missing a mandatory clone url."
   fi
 }
 
@@ -444,13 +473,18 @@ check_invalid_plugins_command_value() {
 }
 
 check_invalid_os_command_value() {
-  # If brew command is not empty and its value is empty or a flag - not valid
+  # If os command is not empty and its value is empty or a flag - not valid
   [[ -n "${CLI_ARGUMENT_OS_COMMAND}" && (-z "${CLI_VALUE_OS_OPTION}" || "${CLI_VALUE_OS_OPTION}" == -*) ]] \
   || \
   # If os options are not part of the valid values
   [[ -n "${CLI_ARGUMENT_OS_COMMAND}" && ( \
     "${CLI_VALUE_OS_OPTION}" != "mac" && \
     "${CLI_VALUE_OS_OPTION}" != "linux") ]]
+}
+
+check_invalid_link_command_value() {
+  # If link command is not empty and its value is empty or a flag - not valid
+  [[ -n "${CLI_ARGUMENT_LINK_COMMAND}" && (-z "${CLI_VALUE_LINK_CLONE_URL}" || "${CLI_VALUE_LINK_CLONE_URL}" == -*) ]]
 }
 
 main() {
@@ -496,6 +530,10 @@ main() {
 
   if is_os_command; then
     run_os_settings_command_and_exit
+  fi
+
+  if is_link_command; then
+    run_link_command_and_exit
   fi
 
   if is_reload_dotfiles; then
