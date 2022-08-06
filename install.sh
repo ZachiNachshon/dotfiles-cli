@@ -8,7 +8,7 @@
 #    DRY_RUN=True LOCAL_ARCHIVE_FILEPATH=/Users/zachin/codebase/github/dotfiles-cli/dotfiles-cli.tar.gz ./install.sh
 
 # When releasing a new version, the install script must be updated as well
-VERSION=${VERSION="0.0.0"}
+VERSION=${VERSION="0.2.0"}
 
 # Run the install script in dry-run mode, no file system changes
 DRY_RUN=${DRY_RUN=""}
@@ -132,6 +132,10 @@ cmd_run() {
 
 is_install_from_local_archive() {
   [[ -n "${LOCAL_ARCHIVE_FILEPATH}" ]]
+}
+
+is_homebrew_install() {
+  [[ -n "${HOMEBREW_INSTALL}" ]]
 }
 
 is_symlink() {
@@ -330,14 +334,17 @@ clear_previous_installation() {
 main() {
   local dotfiles_cli_exec_bin_path=$(calculate_dotfiles_cli_exec_symlink_path)
 
-  if is_install_from_local_archive; then
-    copy_local_archive_to_config_path
-  else
-    download_latest_archive_to_config_path
+  if ! is_homebrew_install; then
+    if is_install_from_local_archive; then
+      copy_local_archive_to_config_path
+    else
+      download_latest_archive_to_config_path
+    fi
+
+    extract_dotfiles_cli_archive
+    adjust_global_executable_symlink "${dotfiles_cli_exec_bin_path}"
   fi
 
-  extract_dotfiles_cli_archive
-  adjust_global_executable_symlink "${dotfiles_cli_exec_bin_path}"
   add_dotfiles_cli_header_to_rc_file
   new_line
   log_info "Type 'dotfiles' to print the help menu (shell session reload might be required)"

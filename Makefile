@@ -1,30 +1,37 @@
 default: help
 
-.PHONY: install_from_respository
-install_from_respository: ## Install a local dotfiles CLI from this repository
+.PHONY: create_tarball
+create_tarball: ## Create a tarball from local repository
 	@tar \
 	--exclude='.git' \
 	--exclude='Makefile' \
 	--exclude='install.sh' \
+	--exclude='docs-site/' \
 	--exclude='dotfiles-cli.tar.gz' \
 	-zcf dotfiles-cli.tar.gz \
 	.
-	@LOCAL_ARCHIVE_FILEPATH=$(CURDIR)/dotfiles-cli.tar.gz ./install.sh
+
+.PHONY: delete_tarball
+delete_tarball: ## Delete a tarball is exists
 	@rm -rf $(CURDIR)/dotfiles-cli.tar.gz
+
+# .PHONY: install_local_brew_formula
+# install_local_brew_formula: create_tarball ## Install a dotfiles from a local Homebrew formula
+# 	@mkdir -p "${HOME}/Library/Caches/Homebrew/dotfiles-cli--9.9.9"
+# 	@cp ./dotfiles-cli.tar.gz "${HOME}/Library/Caches/Homebrew/dotfiles-cli--9.9.9"
+# 	@HOMEBREW_NO_AUTO_UPDATE=1 brew tap ZachiNachshon/tap
+# 	@HOMEBREW_NO_AUTO_UPDATE=1 brew install -vd --build-from-source ./formula.rb
+
+.PHONY: install_from_respository
+install_from_respository: create_tarball ## Install a local dotfiles CLI from this repository
+	@LOCAL_ARCHIVE_FILEPATH=$(CURDIR)/dotfiles-cli.tar.gz ./install.sh
 
 .PHONY: uninstall
 uninstall: ## Uninstall a local dotfiles CLI
 	@./uninstall.sh
 
 .PHONY: release_version_create
-release_version_create: ## Create release tag in GitHub with version from resources/version.txt
-	@tar \
-	--exclude='.git' \
-	--exclude='Makefile' \
-	--exclude='install.sh' \
-	--exclude='dotfiles-cli.tar.gz' \
-	-zcf dotfiles-cli.tar.gz \
-	.
+release_version_create: create_tarball ## Create release tag in GitHub with version from resources/version.txt
 	@sh -c "'$(CURDIR)/external/shell_scripts_lib/github/release.sh' \
 	'action: create' \
 	'version_file_path: ./resources/version.txt' \
@@ -48,7 +55,7 @@ calculate_sha_by_tag: ## Enter a tag to get its SHA hash
 	@sh -c "'$(CURDIR)/external/shell_scripts_lib/github/sha_calculator.sh' \
 	'sha_source: tag' \
 	'repository_url: https://github.com/ZachiNachshon/dotfiles-cli' \
-	'asset_name: dotfiles-cli.sh'"
+	'asset_name: dotfiles-cli.tar.gz'"
 
 # http://localhost:9001/dotfiles-cli/
 .PHONY: serve_docs_site
