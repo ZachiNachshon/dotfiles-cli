@@ -20,6 +20,8 @@ logs/
 .*.sw[a-z]
 *.un~
 
+dotfiles-cli.tar.gz
+
 # Docs Site
 docs-site/.hugo_build.lock
 docs-site/_site
