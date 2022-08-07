@@ -9,6 +9,11 @@
 
 CURRENT_FOLDER_ABS_PATH=$(dirname "${BASH_SOURCE[0]}")
 
+is_comment() {
+  local line=$1
+  [[ "${line}" == \#* ]]
+}
+
 #######################################
 # Split a string by a delimiter
 # Globals:

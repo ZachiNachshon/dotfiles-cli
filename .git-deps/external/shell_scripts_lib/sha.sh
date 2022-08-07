@@ -12,10 +12,7 @@ shasum_calculate() {
   local download_path=$(mktemp -d "${TMPDIR:-/tmp}"/shell-scripts-lib-shasum.XXXXXX)
   cwd=$(pwd)
   cd "${download_path}" || exit
-  curl --fail -s "${url}" \
-    -L -o "${filename}"
-
-  # log_error "Path: ${download_path}/${filename}"
+  curl -LJO --fail --silent --show-error "${url}" --output "${filename}"
 
   local shasum=""
   if is_file_exist "${download_path}/${filename}"; then
