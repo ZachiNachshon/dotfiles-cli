@@ -4,27 +4,16 @@ default: help
 create_tarball: ## Create a tarball from local repository
 	@tar \
 	--exclude='.git' \
-	--exclude='Makefile' \
-	--exclude='install.sh' \
 	--exclude='docs-site/' \
+	--exclude='formula.rb' \
 	--exclude='dotfiles-cli.tar.gz' \
 	-zcf dotfiles-cli.tar.gz \
 	.
 
-.PHONY: delete_tarball
-delete_tarball: ## Delete a tarball is exists
-	@rm -rf $(CURDIR)/dotfiles-cli.tar.gz
-
-# .PHONY: install_local_brew_formula
-# install_local_brew_formula: create_tarball ## Install a dotfiles from a local Homebrew formula
-# 	@mkdir -p "${HOME}/Library/Caches/Homebrew/dotfiles-cli--9.9.9"
-# 	@cp ./dotfiles-cli.tar.gz "${HOME}/Library/Caches/Homebrew/dotfiles-cli--9.9.9"
-# 	@HOMEBREW_NO_AUTO_UPDATE=1 brew tap ZachiNachshon/tap
-# 	@HOMEBREW_NO_AUTO_UPDATE=1 brew install -vd --build-from-source ./formula.rb
-
 .PHONY: install_from_respository
 install_from_respository: create_tarball ## Install a local dotfiles CLI from this repository
 	@LOCAL_ARCHIVE_FILEPATH=$(CURDIR)/dotfiles-cli.tar.gz ./install.sh
+	@rm -rf $(CURDIR)/dotfiles-cli.tar.gz
 
 .PHONY: uninstall
 uninstall: ## Uninstall a local dotfiles CLI
@@ -37,6 +26,7 @@ release_version_create: create_tarball ## Create release tag in GitHub with vers
 	'version_file_path: ./resources/version.txt' \
 	'artifact_file_path: dotfiles-cli.tar.gz' \
 	'debug'"
+	@rm -rf $(CURDIR)/dotfiles-cli.tar.gz
 
 .PHONY: release_version_delete
 release_version_delete: ## Enter a tag to delete its attached release tag from GitHub
