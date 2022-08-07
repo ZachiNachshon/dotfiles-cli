@@ -3,12 +3,19 @@
 COLOR_RED='\033[0;31m'
 COLOR_GREEN='\033[0;32m'
 COLOR_YELLOW="\033[0;33m"
-COLOR_WHITE='\033[1;37m'
+COLOR_BLUE="\033[0;34m"
+COLOR_PURPLE="\033[0;35m"
 COLOR_LIGHT_CYAN='\033[0;36m'
+COLOR_WHITE='\033[1;37m'
 COLOR_NONE='\033[0m'
 
-CLI_OPTION_SILENT=""
-CLI_OPTION_DRY_RUN=""
+LOGGER_DEBUG=""
+LOGGER_SILENT=""
+LOGGER_DRY_RUN=""
+
+ICON_GOOD="${COLOR_GREEN}✔${COLOR_NONE}"
+ICON_WARN="${COLOR_YELLOW}⚠${COLOR_NONE}"
+ICON_BAD="${COLOR_RED}✗${COLOR_NONE}"
 
 exit_on_error() {
   exit_code=$1
@@ -20,12 +27,16 @@ exit_on_error() {
   fi
 }
 
+is_debug() {
+  [[ -n "${LOGGER_DEBUG}" ]]
+}
+
 is_silent() {
-  [[ -n ${CLI_OPTION_SILENT} ]]
+  [[ -n ${LOGGER_SILENT} ]]
 }
 
 is_dry_run() {
-  [[ -n ${CLI_OPTION_DRY_RUN} ]]
+  [[ -n ${LOGGER_DRY_RUN} ]]
 }
 
 evaluate_dry_run_mode() {
@@ -39,6 +50,17 @@ _log_base() {
   prefix=$1
   shift
   echo -e "${prefix}$*" >&2
+}
+
+log_debug() {
+  local debug_level_txt="DEBUG"
+  if is_dry_run; then
+    debug_level_txt+=" (Dry Run)"
+  fi
+
+  if ! is_silent && is_debug; then
+    _log_base "${COLOR_WHITE}${debug_level_txt}${COLOR_NONE}: " "$@"
+  fi
 }
 
 log_info() {
@@ -83,4 +105,34 @@ log_fatal() {
 
 new_line() {
   echo -e "" >&2
+}
+
+log_indicator_good() {
+local error_level_txt=""
+  if is_dry_run; then
+    error_level_txt+=" (Dry Run)"
+  fi
+  if ! is_silent; then
+    _log_base "${ICON_GOOD}${error_level_txt} " "$@" 
+  fi
+}
+
+log_indicator_warning() {
+ local error_level_txt=""
+  if is_dry_run; then
+    error_level_txt+=" (Dry Run)"
+  fi
+  if ! is_silent; then
+    _log_base "${ICON_WARN}${error_level_txt} " "$@"  
+  fi
+}
+
+log_indicator_bad() {
+ local error_level_txt=""
+  if is_dry_run; then
+    error_level_txt+=" (Dry Run)"
+  fi
+  if ! is_silent; then
+    _log_base "${ICON_BAD}${error_level_txt} " "$@" 
+  fi
 }
