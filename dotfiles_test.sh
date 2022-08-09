@@ -11,8 +11,8 @@
 TEST_DATA_DOTFILES_REPO_PATH="${PWD}/test_data/dotfiles_repo"  
 TEST_DATA_DOTFILES_CLI_REPO_PATH="${PWD}"  
 
-
 source "external/shell_scripts_lib/logger.sh"
+source "external/shell_scripts_lib/shell.sh"
 source "external/shell_scripts_lib/test_lib/init.sh"
 source "external/shell_scripts_lib/test_lib/assert.sh"
 source "external/shell_scripts_lib/test_lib/assert.sh"
@@ -55,10 +55,19 @@ test_dotfiles_sync_all() {
 
   # Given I prepare the expected HOME folder symlinks
   local home_link_gitigonre="${TEST_DATA_DOTFILES_REPO_PATH}/dotfiles/home/.gitignore_global ${HOME}/.gitignore_global"
-  local home_link_dummy="${TEST_DATA_DOTFILES_REPO_PATH}/dotfiles/home/.dummy.zsh ${HOME}/.dummy.zsh"
   local home_link_vimrc="${TEST_DATA_DOTFILES_REPO_PATH}/dotfiles/home/.vimrc ${HOME}/.vimrc"
   local home_link_gitconfig="${TEST_DATA_DOTFILES_REPO_PATH}/dotfiles/home/.gitconfig ${HOME}/.gitconfig"
-  local shell_link_zshrc="${TEST_DATA_DOTFILES_REPO_PATH}/dotfiles/shell/.zshrc ${HOME}/.zshrc"
+
+  local home_link_dummy=""
+  local shell_link_zshrc=""
+
+  if shell_is_zsh; then
+    home_link_dummy="${TEST_DATA_DOTFILES_REPO_PATH}/dotfiles/home/.dummy.zsh ${HOME}/.dummy.zsh"
+    shell_link_zshrc="${TEST_DATA_DOTFILES_REPO_PATH}/dotfiles/shell/.zshrc ${HOME}/.zshrc"
+  elif shell_is_bash; then
+    home_link_dummy="${TEST_DATA_DOTFILES_REPO_PATH}/dotfiles/home/.dummy.bash ${HOME}/.dummy.bash"
+    shell_link_zshrc="${TEST_DATA_DOTFILES_REPO_PATH}/dotfiles/shell/.bashrc ${HOME}/.bashrc"
+  fi
 
   # And I sync all home and shell files
   ./dotfiles.sh sync all --dry-run -y -v >& "${TEST_log}" ||
