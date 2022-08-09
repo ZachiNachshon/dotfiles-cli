@@ -323,7 +323,11 @@
             <nav id="TableOfContents">
   <ul>
     <li><a href="#requirements">Requirements</a></li>
-    <li><a href="#quickstart">QuickStart</a></li>
+    <li><a href="#quickstart">QuickStart</a>
+      <ul>
+        <li><a href="#first-timers">First Timers</a></li>
+      </ul>
+    </li>
   </ul>
 </nav>
           </div>
@@ -341,7 +345,31 @@
 <h2 id="quickstart">QuickStart <a class="anchor-link" href="#quickstart" aria-label="Link to this section: QuickStart"></a></h2>
 <p>The fastest way (for <code>macOS</code> and <code>Linux</code>) to install <code>dotfiles-cli</code> is using <a href="https://brew.sh/">Homebrew</a>:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">brew install ZachiNachshon/tap/dotfiles-cli
-</code></pre></div>
+</code></pre></div><h3 id="first-timers">First Timers <a class="anchor-link" href="#first-timers" aria-label="Link to this section: First Timers"></a></h3>
+<p>Recommended commands order for initial setup:</p>
+<ol>
+<li>
+<p>Clone and link a remote dotfiles repository:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">dotfiles link https://github.com/ZachiNachshon/dotfiles-example.git
+</code></pre></div></li>
+<li>
+<p>Create home/shell symlinks to <code>$HOME</code> folder:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">dotfiles sync all
+</code></pre></div></li>
+<li>
+<p>Install shell plugins:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">dotfiles plugins &lt;bash/zsh&gt;
+</code></pre></div></li>
+<li>
+<p>Update OS settings and preferences:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">dotfiles os &lt;mac/linux&gt;
+</code></pre></div></li>
+<li>
+<p>Install Homebrew components (might take time):</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">dotfiles brew all
+</code></pre></div></li>
+</ol>
+
       </div>
     </main>
   </div>
@@ -363,7 +391,7 @@
         <ul class="list-unstyled small text-muted">
           <li class="mb-2">Designed and built by <a href="https://github.com/ZachiNachshon" target="_blank" >Zachi Nachshon</a>, Code licensed <a href="https://github.com/ZachiNachshon/dotfiles-cli/blob/master/LICENSE" target="_blank" rel="license noopener">MIT</a>.</li>
           <li class="mb-2">Site and docs were influenced from <a href="https://getbootstrap.com/" target="_blank">getbootstrap.com</a>, see license <a href="https://creativecommons.org/licenses/by/3.0/" target="_blank" rel="license noopener">CC BY 3.0</a>.</li>
-          <li class="mb-2">Currently v0.1.0.</li>
+          <li class="mb-2">Currently v0.3.0.</li>
         </ul>
       </div>
       <div class="col-6 col-lg-2 offset-lg-1 mb-3">
