@@ -59,14 +59,14 @@ test_dotfiles_sync_all() {
   local home_link_gitconfig="${TEST_DATA_DOTFILES_REPO_PATH}/dotfiles/home/.gitconfig ${HOME}/.gitconfig"
 
   local home_link_dummy=""
-  local shell_link_zshrc=""
+  local shell_link_dummy=""
 
   if shell_is_zsh; then
     home_link_dummy="${TEST_DATA_DOTFILES_REPO_PATH}/dotfiles/home/.dummy.zsh ${HOME}/.dummy.zsh"
-    shell_link_zshrc="${TEST_DATA_DOTFILES_REPO_PATH}/dotfiles/shell/.zshrc ${HOME}/.zshrc"
+    shell_link_dummy="${TEST_DATA_DOTFILES_REPO_PATH}/dotfiles/shell/.zshrc ${HOME}/.zshrc"
   elif shell_is_bash; then
     home_link_dummy="${TEST_DATA_DOTFILES_REPO_PATH}/dotfiles/home/.dummy.bash ${HOME}/.dummy.bash"
-    shell_link_zshrc="${TEST_DATA_DOTFILES_REPO_PATH}/dotfiles/shell/.bashrc ${HOME}/.bashrc"
+    shell_link_dummy="${TEST_DATA_DOTFILES_REPO_PATH}/dotfiles/shell/.bashrc ${HOME}/.bashrc"
   fi
 
   # And I sync all home and shell files
@@ -78,7 +78,7 @@ test_dotfiles_sync_all() {
   assert_expect_log "${home_link_dummy}"
   assert_expect_log "${home_link_vimrc}"
   assert_expect_log "${home_link_gitconfig}"
-  assert_expect_log "${shell_link_zshrc}"
+  assert_expect_log "${shell_link_dummy}"
 
   after_test
 }
@@ -88,9 +88,16 @@ test_dotfiles_sync_home() {
 
   # Given I prepare the expected HOME folder symlinks
   local home_link_gitigonre="${TEST_DATA_DOTFILES_REPO_PATH}/dotfiles/home/.gitignore_global ${HOME}/.gitignore_global"
-  local home_link_dummy="${TEST_DATA_DOTFILES_REPO_PATH}/dotfiles/home/.dummy.zsh ${HOME}/.dummy.zsh"
   local home_link_vimrc="${TEST_DATA_DOTFILES_REPO_PATH}/dotfiles/home/.vimrc ${HOME}/.vimrc"
   local home_link_gitconfig="${TEST_DATA_DOTFILES_REPO_PATH}/dotfiles/home/.gitconfig ${HOME}/.gitconfig"
+
+  local home_link_dummy=""
+
+  if shell_is_zsh; then
+    home_link_dummy="${TEST_DATA_DOTFILES_REPO_PATH}/dotfiles/home/.dummy.zsh ${HOME}/.dummy.zsh"
+  elif shell_is_bash; then
+    home_link_dummy="${TEST_DATA_DOTFILES_REPO_PATH}/dotfiles/home/.dummy.bash ${HOME}/.dummy.bash"
+  fi
 
   # And I sync home files
   ./dotfiles.sh sync home --dry-run -y -v >& "${TEST_log}" ||
@@ -109,14 +116,20 @@ test_dotfiles_sync_shell() {
   before_test "test_dotfiles_sync_shell"
 
   # Given I prepare the expected HOME folder symlinks
-  local shell_link_zshrc="${TEST_DATA_DOTFILES_REPO_PATH}/dotfiles/shell/.zshrc ${HOME}/.zshrc"
+  local shell_link_dummy=""
+
+  if shell_is_zsh; then
+    shell_link_dummy="${TEST_DATA_DOTFILES_REPO_PATH}/dotfiles/shell/.zshrc ${HOME}/.zshrc"
+  elif shell_is_bash; then
+    shell_link_dummy="${TEST_DATA_DOTFILES_REPO_PATH}/dotfiles/shell/.bashrc ${HOME}/.bashrc"
+  fi
 
   # And I sync shell files
   ./dotfiles.sh sync shell --dry-run -y -v >& "${TEST_log}" ||
     echo "Failed to run dotfiles command"
 
   # Then I expect shell symlinks to exists
-  assert_expect_log "${shell_link_zshrc}"
+  assert_expect_log "${shell_link_dummy}"
 
   after_test
 }
