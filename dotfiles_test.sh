@@ -139,10 +139,19 @@ test_dotfiles_unsync_all() {
 
   # Given I prepare the expected files to unlink
   local home_unlink_gitigonre="unlink ${HOME}/.gitignore_global"
-  local home_unlink_dummy="unlink ${HOME}/.dummy.zsh"
   local home_unlink_vimrc="unlink ${HOME}/.vimrc"
   local home_unlink_gitconfig="unlink ${HOME}/.gitconfig"
-  local shell_unlink_zshrc="unlink ${HOME}/.zshrc"
+  
+  local home_link_dummy=""
+  local shell_link_dummy=""
+
+  if shell_is_zsh; then
+    home_unlink_dummy="unlink ${HOME}/.dummy.zsh"
+    shell_link_dummy="unlink ${HOME}/.zshrc"
+  elif shell_is_bash; then
+    home_unlink_dummy="unlink ${HOME}/.dummy.bash"
+    shell_link_dummy="unlink ${HOME}/.bashrc"
+  fi
 
   # And I unsync all home and shell files
   ./dotfiles.sh unsync all --dry-run -y -v >& "${TEST_log}" ||
@@ -153,7 +162,7 @@ test_dotfiles_unsync_all() {
   assert_expect_log "${home_unlink_dummy}"
   assert_expect_log "${home_unlink_vimrc}"
   assert_expect_log "${home_unlink_gitconfig}"
-  assert_expect_log "${shell_unlink_zshrc}"
+  assert_expect_log "${shell_link_dummy}"
 
   after_test
 }
@@ -163,9 +172,16 @@ test_dotfiles_unsync_home() {
 
   # Given I prepare the expected files to unlink
   local home_unlink_gitigonre="unlink ${HOME}/.gitignore_global"
-  local home_unlink_dummy="unlink ${HOME}/.dummy.zsh"
   local home_unlink_vimrc="unlink ${HOME}/.vimrc"
   local home_unlink_gitconfig="unlink ${HOME}/.gitconfig"
+
+  local home_link_dummy=""
+
+  if shell_is_zsh; then
+    home_unlink_dummy="unlink ${HOME}/.dummy.zsh"
+  elif shell_is_bash; then
+    home_unlink_dummy="unlink ${HOME}/.dummy.bash"
+  fi
 
   # And I unsync home files
   ./dotfiles.sh unsync home --dry-run -y -v >& "${TEST_log}" ||
@@ -184,14 +200,20 @@ test_dotfiles_unsync_shell() {
   before_test "test_dotfiles_unsync_shell"
 
   # Given I prepare the expected files to unlink
-  local shell_unlink_zshrc="unlink ${HOME}/.zshrc"
+  local shell_link_dummy=""
+
+  if shell_is_zsh; then
+    shell_link_dummy="unlink ${HOME}/.zshrc"
+  elif shell_is_bash; then
+    shell_link_dummy="unlink ${HOME}/.bashrc"
+  fi
 
   # And I unsync shell files
   ./dotfiles.sh unsync shell --dry-run -y -v >& "${TEST_log}" ||
     echo "Failed to run dotfiles command"
 
   # Then I expect shell symlinks to get unlinked
-  assert_expect_log "${shell_unlink_zshrc}"
+  assert_expect_log "${shell_link_dummy}"
 
   after_test
 }
