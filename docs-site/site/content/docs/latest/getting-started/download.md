@@ -34,50 +34,28 @@ Alternatively, tap into the formula to have brew search capabilities on that tap
 
 ## Released Version
 
-1. Download and install `dotfiles-cli` executable (copy & paste into a terminal):
+Download and install `dotfiles-cli` executable (copy & paste into a terminal):
 
 ```bash
-bash <<'EOF'
+curl -sfLS https://raw.githubusercontent.com/ZachiNachshon/dotfiles-cli/master/install.sh | bash -
+```
 
-# Change Version accordingly
-VERSION=0.1.0
+Available installation flags:
+{{< bs-table >}}
+| Flag | Description |
+| --- | --- |
+| `VERSION` | Specify the released version to install |
+| `DRY_RUN` | Run all commands in dry-run mode without file system changes |
+{{< /bs-table >}}
 
-# Create a temporary folder
-download_temp_path=$(mktemp -d ${TMPDIR:-/tmp}/dotfiles-cli-temp.XXXXXX)
-cwd=$(pwd)
-cd ${download_temp_path}
+Example:
 
-# Download & extract
-echo -e "\nDownloading dotfiles-cli to a temp directory...\n"
-curl -SL "https://github.com/ZachiNachshon/dotfiles-cli/releases/download/v${VERSION}/dotfiles-cli.tar.gz"
-
-# Create a dest directory and move the binary
-echo -e "\nUnpacking the artifact to ~/.local/bin"
-mkdir -p ${HOME}/.local/bin
-mv dotfiles-cli.tar.gz ${HOME}/.local/bin
-tar -xvf ${HOME}/.local/bin/dotfiles-cli.tar.gz -C ${HOME}/.local/bin/dotfiles-cli
-
-echo "Elevating exec permissions (might prompt for password)"
-chmod +x ${HOME}/.local/bin/dotfiles-cli/install.sh
-
-# Install the dotfiles CLI
-./${HOME}/.local/bin/dotfiles-cli/install.sh
-
-# Add this line to your *rc file (zshrc, bashrc etc..) to make dotfiles-cli available on new sessions
-echo "Exporting ~/.local/bin (make sure to have it available on PATH)"
-export PATH="${PATH}:${HOME}/.local/bin"
-
-cd ${cwd}
-
-# Cleanup
-if [[ ! -z ${download_temp_path} && -d ${download_temp_path} && ${download_temp_path} == *"dotfiles-cli-temp"* ]]; then
-  echo "Deleting temp directory"
-  rm -rf ${download_temp_path}
-fi
-
-echo -e "\nDone (type 'dotfiles-cli' for help)\n"
-
-EOF
+```bash
+curl -sfLS \
+  https://raw.githubusercontent.com/ZachiNachshon/dotfiles-cli/master/install.sh | \
+  DRY_RUN=True \
+  VERSION=0.3.0 \
+  bash -
 ```
 
 Alternatively, you can download a release directy from GitHub
@@ -95,6 +73,6 @@ Make sure `${HOME}/.local/bin` exists on the `PATH` or sourced on every new shel
 Clone `dotfiles-cli` repository into a directory of your choice and install:
 
 ```bash
-git clone https://github.com/ZachiNachshon/dotfiles-cli.git; cd dotfiles-cli; ./install.sh
+git clone https://github.com/ZachiNachshon/dotfiles-cli.git; cd dotfiles-cli; make install_from_respository
 
 ```

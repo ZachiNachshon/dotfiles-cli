@@ -18,4 +18,4 @@ aliases:
 
 ## Get Involved
 
-Get involved with `dotfiles-cli` development by [opening an issue]({{< param repo >}}/issues/new) or submitting a pull request. Read the [contribute](/docs/{{< param docs_version >}}/getting-started/contribute/) section for additional information.
+Get involved with `dotfiles-cli` development by [opening an issue]({{< param repo >}}/issues/new?assignees=&labels=&template=bug_report.md&title=) or submitting a pull request. Read the [contribute](/docs/{{< param docs_version >}}/getting-started/contribute/) section for additional information.

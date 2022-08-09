@@ -1,0 +1,14 @@
+#!/bin/bash
+
+#
+# Place your work related / personal content in here...
+#
+
+# -=-= Aliases =-=-
+
+# -=-= NPM =-=-
+
+# -=-= Functions =-=-
+custom_test_function() {
+  echo "Hello, I am a test"
+}

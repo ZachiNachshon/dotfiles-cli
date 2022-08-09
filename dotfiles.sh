@@ -8,8 +8,9 @@
 #==============================================================================
 
 CONFIG_FOLDER_PATH="${HOME}/.config"
-DOTFILES_CLI_INSTALL_PATH="${CONFIG_FOLDER_PATH}/dotfiles-cli"
-DOTFILES_REPO_LOCAL_PATH="${CONFIG_FOLDER_PATH}/dotfiles"
+# DOTFILES_CLI_INSTALL_PATH="${CONFIG_FOLDER_PATH}/dotfiles-cli"
+DOTFILES_CLI_INSTALL_PATH="/Users/zachin/codebase/github/dotfiles-cli"
+DOTFILES_REPO_LOCAL_PATH=${DOTFILES_REPO_LOCAL_PATH:-"${CONFIG_FOLDER_PATH}/dotfiles"}
 
 source "${DOTFILES_CLI_INSTALL_PATH}/brew/brew.sh"
 source "${DOTFILES_CLI_INSTALL_PATH}/linker/linker.sh"
@@ -19,7 +20,6 @@ source "${DOTFILES_CLI_INSTALL_PATH}/os/mac/mac.sh"
 source "${DOTFILES_CLI_INSTALL_PATH}/os/linux/linux.sh"
 source "${DOTFILES_CLI_INSTALL_PATH}/plugins/plugins.sh"
 source "${DOTFILES_CLI_INSTALL_PATH}/external/shell_scripts_lib/logger.sh"
-source "${DOTFILES_CLI_INSTALL_PATH}/external/shell_scripts_lib/prompter.sh"
 source "${DOTFILES_CLI_INSTALL_PATH}/external/shell_scripts_lib/git.sh"
 source "${DOTFILES_CLI_INSTALL_PATH}/external/shell_scripts_lib/io.sh"
 source "${DOTFILES_CLI_INSTALL_PATH}/external/shell_scripts_lib/shell.sh"
@@ -339,7 +339,12 @@ reload_active_shell_session_and_exit() {
   if is_silent; then 
     reload_session_silent_option="True"
   fi
-  (export DOTFILES_CLI_SILENT_OPTION=${reload_session_silent_option} && exec ${shell_in_use})
+
+  if ! is_dry_run; then
+    (export DOTFILES_CLI_SILENT_OPTION=${reload_session_silent_option} && exec ${shell_in_use})
+  else
+    log_info "(export DOTFILES_CLI_SILENT_OPTION=${reload_session_silent_option} && exec ${shell_in_use})"
+  fi
   exit 0
 }
 
@@ -380,9 +385,14 @@ change_dir_to_dotfiles_local_repo_and_exit() {
   else
     log_info "Changing directory to ${DOTFILES_REPO_LOCAL_PATH}"  
     cd "${DOTFILES_REPO_LOCAL_PATH}" || exit
-    # Read the following link to understand why we should use SHELL in here
-    # https://unix.stackexchange.com/a/278080
-    (export DOTFILES_CLI_SILENT_OPTION="True" && $SHELL)
+
+    if ! is_dry_run; then
+      # Read the following link to understand why we should use SHELL in here
+      # https://unix.stackexchange.com/a/278080
+      (export DOTFILES_CLI_SILENT_OPTION="True" && $SHELL)
+    else 
+      log_info "(export DOTFILES_CLI_SILENT_OPTION=True && $SHELL)"
+    fi
   fi
   exit 0
 }

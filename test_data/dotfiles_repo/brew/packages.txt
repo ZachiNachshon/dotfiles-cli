@@ -1,0 +1,5 @@
+# ===================================== IMPORTANT =========================================
+# AN EMPTY LINE AT THE END OF THE FILE IS MANDATORY - FOR THE LAST ITEM TO BE READ PROPERLY
+# =========================================================================================
+dummy-package-1
+dummy-package-2

@@ -2,13 +2,13 @@
 
 # Installation commands:
 #  Basic:
-#    curl -sfL https://github.com/ZachiNachshon/dotfiles-cli/install.sh | bash -
+#    curl -sfLS https://raw.githubusercontent.com/ZachiNachshon/dotfiles-cli/master/install.sh | bash -
 #  Options:
-#    curl -sfL https://github.com/ZachiNachshon/dotfiles-cli/install.sh | VERSION=1.1.1 bash -
+#    curl -sfLS https://raw.githubusercontent.com/ZachiNachshon/dotfiles-cli/master/install.sh | DRY_RUN=True VERSION=0.3.0 bash -
 #    DRY_RUN=True LOCAL_ARCHIVE_FILEPATH=/Users/zachin/codebase/github/dotfiles-cli/dotfiles-cli.tar.gz ./install.sh
 
 # When releasing a new version, the install script must be updated as well to latest
-VERSION=${VERSION="0.2.0"}
+VERSION=${VERSION="0.3.0"}
 
 # Run the install script in dry-run mode, no file system changes
 DRY_RUN=${DRY_RUN=""}
@@ -172,7 +172,7 @@ copy_local_archive_to_config_path() {
 }
 
 download_latest_archive_to_config_path() {
-  log_info "Installing dotfiles CLI from GitHub"
+  log_info "Installing dotfiles CLI from GitHub releases"
   local filename="${DOTFILES_CLI_ARCHIVE_NAME}"
   local download_path="${DOTFILES_CLI_INSTALL_PATH}"
   local url="${DOTFILES_CLI_REPOSITORY_URL}/releases/download/v${VERSION}/${filename}"
@@ -183,12 +183,12 @@ download_latest_archive_to_config_path() {
   if is_directory_exist "${download_path}"; then
     cd "${download_path}" || exit
   fi
-  log_info "Downloading dotfiles-cli from GitHub. version: ${VERSION}"
+  log_info "Downloading dotfiles-cli from GitHub releases. version: ${VERSION}"
   cmd_run "curl --fail -s ${url} -L -o ${filename}"
   cd "${cwd}" || exit
 
   if ! is_dry_run && ! is_file_exist "${download_path}/${filename}"; then
-    log_fatal "Failed to download dotfiles-cli from GitHub. version: ${VERSION}"
+    log_fatal "Failed to download dotfiles-cli from GitHub releases. version: ${VERSION}"
   fi
 }
 
@@ -230,7 +230,16 @@ main() {
   adjust_global_executable_symlink "${dotfiles_cli_exec_bin_path}"
 
   new_line
-  log_info "Type 'dotfiles' to print the help menu (shell session reload might be required)"
+  log_warning """Manual installation requires a specific PATH to become available on shell session:
+
+  export PATH=\${HOME}/.local/bin:\${PATH}
+"""
+  log_warning """To make the 'dotfiles' command available, please choose one method:
+  
+  • Run the above command
+  • Add the above command to the RC file (zshrc/bashrc/bash_profile) and open a new shell session
+  """
+  log_info "Type 'dotfiles' to print the help menu"
   new_line
 }
 

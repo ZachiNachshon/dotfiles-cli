@@ -1,0 +1,10 @@
+[user]
+  name = TestUserName
+  email = test.user@gmail.com
+[core]
+  autocrlf = input
+  excludesfile = ~/.gitignore_global
+[pull]
+  rebase = true
+[merge]
+  ff = only

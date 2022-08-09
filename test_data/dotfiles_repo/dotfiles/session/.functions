@@ -1,0 +1,5 @@
+#!/bin/bash
+
+function_test_hello() {
+  echo "hello from dotfiles tests"
+}

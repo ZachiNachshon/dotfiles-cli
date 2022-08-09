@@ -43,15 +43,16 @@ prompt_for_password() {
   local message=$1
   local default=$2
 
-  if [[ -n "${default}" ]]; then
-    # Use printf to enforce new lines
-    printf "${message} (default: ${default}): " >&0
-  else
-    printf "${message} (enter to skip): " >&0
-  fi
-
   if ! is_skip_prompt; then
+    if [[ -n "${default}" ]]; then
+      # Use printf to enforce new lines
+      printf "${message} (default: ${default}): " >&0
+    else
+      printf "${message} (enter to skip): " >&0
+    fi
+
     read -s password
+
     if [[ -z "${password}" ]]; then
       if [[ -n "${default}" ]]; then
         password="${default}"
@@ -80,19 +81,19 @@ prompt_yes_no() {
   local message=$1
   local level=$2
 
-  local prompt=""
-  if [[ ${level} == "critical" ]]; then
-    prompt="${COLOR_RED}${message}? (y/n):${COLOR_NONE} "
-  elif [[ ${level} == "warning" ]]; then
-    prompt="${COLOR_YELLOW}${message}? (y/n):${COLOR_NONE} "
-  else
-    prompt="${message}? (y/n): "
-  fi
-
-  printf "${prompt}" >&0
-
   if ! is_skip_prompt; then
+    local prompt=""
+    if [[ ${level} == "critical" ]]; then
+      prompt="${COLOR_RED}${message}? (y/n):${COLOR_NONE} "
+    elif [[ ${level} == "warning" ]]; then
+      prompt="${COLOR_YELLOW}${message}? (y/n):${COLOR_NONE} "
+    else
+      prompt="${message}? (y/n): "
+    fi
+
+    printf "${prompt}" >&0
     read input
+
     if [[ "${input}" != "y" ]]; then
       input=""
     fi
@@ -116,15 +117,16 @@ prompt_user_input() {
   local message=$1
   local default=$2
 
-  if [[ -n "${default}" ]]; then
-    # Use printf to enforce new lines
-    printf "${message} (default: ${default}): " >&0
-  else
-    printf "${message} (enter to abort): " >&0
-  fi
-
   if ! is_skip_prompt; then
+    if [[ -n "${default}" ]]; then
+      # Use printf to enforce new lines
+      printf "${message} (default: ${default}): " >&0
+    else
+      printf "${message} (enter to abort): " >&0
+    fi
+
     read input
+    
     if [[ -z "${input}" ]]; then
       if [[ -n "${default}" ]]; then
         input="${default}"
