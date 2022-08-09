@@ -8,7 +8,7 @@
 #==============================================================================
 
 CONFIG_FOLDER_PATH="${HOME}/.config"
-DOTFILES_CLI_INSTALL_PATH="${CONFIG_FOLDER_PATH}/dotfiles-cli"
+DOTFILES_CLI_INSTALL_PATH=${DOTFILES_CLI_INSTALL_PATH:-"${CONFIG_FOLDER_PATH}/dotfiles-cli"}
 DOTFILES_REPO_LOCAL_PATH=${DOTFILES_REPO_LOCAL_PATH:-"${CONFIG_FOLDER_PATH}/dotfiles"}
 
 source "${DOTFILES_CLI_INSTALL_PATH}/brew/brew.sh"

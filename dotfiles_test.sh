@@ -9,6 +9,7 @@
 # TODO: Need to run in a container with bash installed  
 
 TEST_DATA_DOTFILES_REPO_PATH="${PWD}/test_data/dotfiles_repo"  
+TEST_DATA_DOTFILES_CLI_REPO_PATH="${PWD}"  
 
 
 source "external/shell_scripts_lib/logger.sh"
@@ -17,15 +18,16 @@ source "external/shell_scripts_lib/test_lib/assert.sh"
 source "external/shell_scripts_lib/test_lib/assert.sh"
 source "external/shell_scripts_lib/test_lib/test_logs.sh"
 
-set_test_repository_path() {
+set_test_repository_paths() {
   export DOTFILES_REPO_LOCAL_PATH="${TEST_DATA_DOTFILES_REPO_PATH}"
+  export DOTFILES_CLI_INSTALL_PATH="${TEST_DATA_DOTFILES_CLI_REPO_PATH}"
 }
 
 before_test() {
   test_set_up
   TEST_name=$1
   TEST_passed="True"
-  set_test_repository_path
+  set_test_repository_paths
   test_log_print_test_name "${TEST_name}"
 }
 
