@@ -57,6 +57,10 @@ serve_docs_site: ## Run a local site
 serve_docs_site_lan: ## Run a local site (open for LAN)
 	@cd docs-site && npm run docs-serve-lan
 
+.PHONY: test
+test: ## Run test suite
+	@sh -c "$(CURDIR)/dotfiles_test.sh"
+
 help:
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 

@@ -1,0 +1,3 @@
+#!/bin/bash
+
+export TEST_HELLO="Hello from dotfiles tests"

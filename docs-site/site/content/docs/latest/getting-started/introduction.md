@@ -21,3 +21,37 @@ The fastest way (for `macOS` and `Linux`) to install `dotfiles-cli` is using [Ho
 ```bash
 brew install ZachiNachshon/tap/dotfiles-cli
 ```
+
+### First Timers
+
+Recommended commands order for initial setup:
+
+1. Clone and link a remote dotfiles repository:
+
+   ```bash
+   dotfiles link https://github.com/ZachiNachshon/dotfiles-example.git
+   ```
+
+1. Create home/shell symlinks to `$HOME` folder:
+
+   ```bash
+   dotfiles sync all
+   ```
+
+1. Install shell plugins:
+
+   ```bash
+   dotfiles plugins <bash/zsh>
+   ```
+
+1. Update OS settings and preferences:
+
+   ```bash
+   dotfiles os <mac/linux>
+   ```
+
+1. Install Homebrew components (might take time):
+
+   ```bash
+   dotfiles brew all
+   ```

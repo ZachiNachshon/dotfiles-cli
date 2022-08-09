@@ -38,6 +38,7 @@ The `makefile` within this repository contains numerous tasks used for project d
 {{< bs-table >}}
 | Task | Description |
 | --- | --- |
+| `create_tarball` | Create a tarball from local repository |
 | `install_from_respository` | Install a local dotfiles CLI from this repository |
 | `uninstall` | Uninstall a local dotfiles CLI |
 | `release_version_create` | Create release tag in GitHub with version from resources/version.txt |

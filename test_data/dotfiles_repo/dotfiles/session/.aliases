@@ -1,0 +1,3 @@
+#!/bin/bash
+
+alias test_hello="echo 'hello from dotfiles tests'"
