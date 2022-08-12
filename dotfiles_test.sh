@@ -6,7 +6,7 @@
 # Description   Run dotfiles tests suite
 #==============================================================================
 
-# TODO: Need to run in a container with bash installed  
+# TODO: Need to run in a container with bash installed
 
 TEST_DATA_DOTFILES_REPO_PATH="${PWD}/test_data/dotfiles_repo"  
 TEST_DATA_DOTFILES_CLI_REPO_PATH="${PWD}"  

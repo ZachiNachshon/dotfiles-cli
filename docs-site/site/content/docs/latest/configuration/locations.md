@@ -18,6 +18,17 @@ aliases: "/docs/latest/configuration/"
 | CLI Global Binary | `$HOME/.config/dotfiles-cli` |
 {{< /bs-table >}}
 
+### Overrides
+
+Available env vars are available to override 
+
+{{< bs-table >}}
+| Task | Description |
+| --- | --- |
+| `DOTFILES_REPO_LOCAL_PATH` | Override the dotfiles repository local path |
+| `DOTFILES_CLI_INSTALL_PATH` | Override the `dotfiles-cli` repository local path |
+{{< /bs-table >}}
+
 {{< callout info >}}
 To get a list of commonly used paths run `dotfiles config`
 {{< /callout >}}

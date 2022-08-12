@@ -8,18 +8,16 @@ toc: true
 
 ## Why creating `dotfiles-cli`?
 
-Those are some of the requirements that lead me to implement a custom solution instead of using git submodule / subtree:
+Those are some of the kep points that lead me to create this project:
 
-1. Merge any git repository into a working directory source code, treat it as external source dependency
-1. Keep the external source dependencies immutable for changes
-1. Having the external git repositories version controlled
-1. Use external git repositories as they were standard libraries imports
-1. Having the ability to hot-swap git external dependencies easily with local paths for development
+1. Simplify the complex dotfiles repository wiring by separating the files from the management layer
+1. Use a dedicatd CLI utility to control all aspects of the dotfiles repository with ease
+1. Having a coherent dotfiles structure that is easy to get familiar with
+1. Allow a generic CLI to control multiple dotfiles repositories (private and public)
+1. Avoid from running arbitrary scripts
 
 ## In a nutshell
 
-`dotfiles-cli` is a lightweight CLI utility used for syncing git repositories as external 3rd party source dependencies into any working directory.
+`dotfiles-cli` is a lightweight CLI utility used for automating your local development environment management i.e. installations / updates with just a few terminal commands.
 
-It offers a simple alternative to git submodule / subtree by allowing a drop-in-replacement of any git repository as an immutable source dependency that is part of the actual working repository source code, files are located and managed within a dedicated `external` folder.
-
-Using the git dependencies is through symlinks located on the `external` folder thus making them easily available for hot-swap if nessesary for development purposes.
+It helps you to manage your local environment settings and preferences under a remote git backed repository so you’ll keep them in a centralized location, detached from any machine and enjoy all the benefits a version control has to offer.
