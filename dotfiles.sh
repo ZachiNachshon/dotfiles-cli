@@ -282,7 +282,7 @@ This is the expected dotfiles repository structure to properly integrate with th
 │   └── taps.txt${COLOR_NONE}
 ${COLOR_GREEN}│
 ├── dotfiles               
-│   ├── custom                  # Custom files to source on every new shell session (workplace/personal)
+│   ├── custom                  # Custom files to source on every new shell session (work/personal)
 │   │   ├── .my-company  
 │   │   └── ...
 │   ├── home                    # Files to symlink into HOME folder

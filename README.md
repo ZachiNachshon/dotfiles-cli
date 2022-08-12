@@ -18,9 +18,14 @@
 </p>
 <br>
 
-**dotfiles-cli** is a lightweight CLI utility used for automating your local development environment management i.e. installations / updates with just a few terminal commands.
+**dotfiles-cli** is a lightweight CLI utility used for automating your local development environment management with just a few terminal commands.
 
 It simplifies the complex dotfiles repository wiring by separating the files from the management layer using a dedicatd CLI utility to control all aspects of the dotfiles repository with ease.
+
+It helps you encapsulate:
+ - Installations and updates
+ - Settings and preferences
+ - Shell session management
 
 <br>
 
@@ -58,6 +63,7 @@ For additional installation methods [read here](https://zachinachshon.com/dotfil
 - [Why creating `dotfiles-cli`?](#why-creating)
 - [How does it work?](#how-does-it-work)
   - [Initial setup](#initial-setup)
+  - [Dotfiles repo structure](#dotfiles-repo-structure)
 - [Documentation](#documentation)
 
 **Maintainers / Contributors:**
@@ -81,8 +87,6 @@ Those are some of the key points that lead me to create this project:
 <h3 id="how-does-it-work">🔬 How Does It Work?</h3>
 
 `dotfiles-cli` is a CLI utility that can be used globally on any directory, it relies on a simple and opinionated dotfiles repository structure which allows it to control and manage domains by category i.e. Homebrew installs, `$HOME` symlinks, OS settings, shell plugins etc..
-
-
 
 <br>
 
@@ -120,10 +124,65 @@ Recommended commands order for initial setup:
    dotfiles brew all
    ```
 
-   | :bulb: Note |
-   | :--------------------------------------- |
-   | Run `dotfiles -h` for additional options. |
+| :bulb: Note |
+| :--------------------------------------- |
+| Run `dotfiles -h` for additional options. |
    
+<br>
+
+<h4 id="dotfiles-repo-structure">Dotfiles Repo Structure</h4>
+
+This is the expected dotfiles repository structure to properly integrate with dotfiles-cli:
+
+```bash
+.
+├── ...
+├── brew                     # Homebrew components, items on each file should be separated by a new line
+│   ├── casks.txt
+│   ├── drivers.txt
+│   ├── packages.txt
+│   ├── services.txt
+│   └── taps.txt
+│
+├── dotfiles               
+│   ├── custom               # Custom files to source on every new shell session (work/personal)
+│   │   ├── .my-company  
+│   │   └── ...
+│   ├── home                 # Files to symlink into HOME folder
+│   │   ├── .gitconfig       
+│   │   ├── .vimrc
+│   │   └── ...
+│   ├── session              # Files to source on new shell sessions
+│   │   ├── .aliases
+│   │   └── ...
+│   ├── shell                # Shell run commands files to symlink into HOME folder
+│   │   ├── .zshrc
+│   │   └── ...
+│   └── transient            # Files to source on new shell session (not symlinked, can be git-ignored)
+│       └── .secrets
+│
+├── os
+│   ├── linux                # Scripts to configure Linux settings and preferences
+│   │   ├── key_bindings.sh
+│   │   └── ...
+│   └── mac                  # Scripts to configure macOS settings and preferences
+│       ├── finder.sh  
+│       └── ...
+│
+├── plugins
+│   ├── zsh                  # Scripts to install ZSH plugins
+│   │   ├── oh_my_zsh.sh  
+│   │   └── ...
+│   └── bash                 # Scripts to install Bash plugins
+│       ├── dummy.sh
+│       └── ...
+└── ...
+```
+
+| :bulb: Note |
+| :--------------------------------------- |
+| For detailed information about the dotfiles repo structure, please [read here](https://zachinachshon.com/dotfiles-cli/docs/latest/usage/structure/). |
+
 
 <br>
 
