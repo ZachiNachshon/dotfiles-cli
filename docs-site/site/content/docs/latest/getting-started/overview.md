@@ -8,7 +8,7 @@ toc: true
 
 ## Why creating `dotfiles-cli`?
 
-Those are some of the kep points that lead me to create this project:
+Those are some of the key points that lead me to create this project:
 
 1. Simplify the complex dotfiles repository wiring by separating the files from the management layer
 1. Use a dedicatd CLI utility to control all aspects of the dotfiles repository with ease

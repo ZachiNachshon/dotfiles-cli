@@ -66,6 +66,9 @@ params:
     source:             "https://github.com/ZachiNachshon/dotfiles-cli/archive/v0.3.0.zip"
     dist:               "https://github.com/ZachiNachshon/dotfiles-cli/releases"
 
+  sponsor:
+    github:             "https://github.com/sponsors/ZachiNachshon"
+    
   anchors:
     min: 2
     max: 5

@@ -11,9 +11,7 @@ aliases: "/docs/latest/configuration/"
 
 The `dotfiles-cli` allows reloading an existing shell session easily without the need to open a new terminal tab or manually source any file. It allows reloading an active shell session by running the `dotfiles reload` command.
 
-Since it is not possible to tamper with parent shell process environment from a nested shell, the `dotfiles reload` command creates a new shell session which in turn run the relevant RC file. 
-
-Upon a new shell and RC file execution, `dotfiles-cli` adds a header to enable the session reload to take place without creating a nested shell session. 
+Since it is not possible to tamper with parent shell process environment from a nested shell, the `dotfiles-cli` adds a header to the RC file that enables the session reload to take place without creating a nested shell.
 
 **Supported RC files:**
 
