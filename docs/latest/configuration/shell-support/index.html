@@ -335,8 +335,7 @@
 
         <h2 id="rc-file-header">RC File Header <a class="anchor-link" href="#rc-file-header" aria-label="Link to this section: RC File Header"></a></h2>
 <p>The <code>dotfiles-cli</code> allows reloading an existing shell session easily without the need to open a new terminal tab or manually source any file. It allows reloading an active shell session by running the <code>dotfiles reload</code> command.</p>
-<p>Since it is not possible to tamper with parent shell process environment from a nested shell, the <code>dotfiles reload</code> command creates a new shell session which in turn run the relevant RC file.</p>
-<p>Upon a new shell and RC file execution, <code>dotfiles-cli</code> adds a header to enable the session reload to take place without creating a nested shell session.</p>
+<p>Since it is not possible to tamper with parent shell process environment from a nested shell, the <code>dotfiles-cli</code> adds a header to the RC file that enables the session reload to take place without creating a nested shell.</p>
 <p><strong>Supported RC files:</strong></p>
 <ul>
 <li><code>.zshrc</code></li>
