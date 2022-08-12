@@ -267,6 +267,7 @@
         </strong>
 
         <ul class="list-unstyled fw-normal pb-2 small">
+            <li><a href="https://zachinachshon.com/dotfiles-cli/docs/latest/configuration/shell-support/" class="bd-links-link d-inline-block rounded">Shell Support</a></li>
             <li><a href="https://zachinachshon.com/dotfiles-cli/docs/latest/configuration/locations/" class="bd-links-link d-inline-block rounded">Locations</a></li>
         </ul>
       </li>
@@ -334,18 +335,17 @@
         
 
         <h2 id="why-creating-dotfiles-cli">Why creating <code>dotfiles-cli</code>? <a class="anchor-link" href="#why-creating-dotfiles-cli" aria-label="Link to this section: Why creating dotfiles-cli?"></a></h2>
-<p>Those are some of the requirements that lead me to implement a custom solution instead of using git submodule / subtree:</p>
+<p>Those are some of the kep points that lead me to create this project:</p>
 <ol>
-<li>Merge any git repository into a working directory source code, treat it as external source dependency</li>
-<li>Keep the external source dependencies immutable for changes</li>
-<li>Having the external git repositories version controlled</li>
-<li>Use external git repositories as they were standard libraries imports</li>
-<li>Having the ability to hot-swap git external dependencies easily with local paths for development</li>
+<li>Simplify the complex dotfiles repository wiring by separating the files from the management layer</li>
+<li>Use a dedicatd CLI utility to control all aspects of the dotfiles repository with ease</li>
+<li>Having a coherent dotfiles structure that is easy to get familiar with</li>
+<li>Allow a generic CLI to control multiple dotfiles repositories (private and public)</li>
+<li>Avoid from running arbitrary scripts</li>
 </ol>
 <h2 id="in-a-nutshell">In a nutshell <a class="anchor-link" href="#in-a-nutshell" aria-label="Link to this section: In a nutshell"></a></h2>
-<p><code>dotfiles-cli</code> is a lightweight CLI utility used for syncing git repositories as external 3rd party source dependencies into any working directory.</p>
-<p>It offers a simple alternative to git submodule / subtree by allowing a drop-in-replacement of any git repository as an immutable source dependency that is part of the actual working repository source code, files are located and managed within a dedicated <code>external</code> folder.</p>
-<p>Using the git dependencies is through symlinks located on the <code>external</code> folder thus making them easily available for hot-swap if nessesary for development purposes.</p>
+<p><code>dotfiles-cli</code> is a lightweight CLI utility used for automating your local development environment management i.e. installations / updates with just a few terminal commands.</p>
+<p>It helps you to manage your local environment settings and preferences under a remote git backed repository so you’ll keep them in a centralized location, detached from any machine and enjoy all the benefits a version control has to offer.</p>
 
       </div>
     </main>

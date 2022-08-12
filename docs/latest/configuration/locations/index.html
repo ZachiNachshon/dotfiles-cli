@@ -267,6 +267,7 @@
         </strong>
 
         <ul class="list-unstyled fw-normal pb-2 small">
+            <li><a href="https://zachinachshon.com/dotfiles-cli/docs/latest/configuration/shell-support/" class="bd-links-link d-inline-block rounded">Shell Support</a></li>
             <li><a href="https://zachinachshon.com/dotfiles-cli/docs/latest/configuration/locations/" class="bd-links-link d-inline-block rounded">Locations</a></li>
         </ul>
       </li>
@@ -322,7 +323,11 @@
           <div class="collapse bd-toc-collapse" id="tocContents">
             <nav id="TableOfContents">
   <ul>
-    <li><a href="#locations">Locations</a></li>
+    <li><a href="#locations">Locations</a>
+      <ul>
+        <li><a href="#overrides">Overrides</a></li>
+      </ul>
+    </li>
   </ul>
 </nav>
           </div>
@@ -349,6 +354,27 @@
 <tr>
 <td>CLI Global Binary</td>
 <td><code>$HOME/.config/dotfiles-cli</code></td>
+</tr>
+</tbody>
+</table></div>
+
+<h3 id="overrides">Overrides <a class="anchor-link" href="#overrides" aria-label="Link to this section: Overrides"></a></h3>
+<p>Available env vars are available to override</p>
+<div class="table-responsive"><table class="table">
+<thead>
+<tr>
+<th>Task</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>DOTFILES_REPO_LOCAL_PATH</code></td>
+<td>Override the dotfiles repository local path</td>
+</tr>
+<tr>
+<td><code>DOTFILES_CLI_INSTALL_PATH</code></td>
+<td>Override the <code>dotfiles-cli</code> repository local path</td>
 </tr>
 </tbody>
 </table></div>
