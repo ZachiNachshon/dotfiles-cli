@@ -15,6 +15,7 @@
   icon: gear
   icon_color: blue
   pages:
+    - title: Shell Support
     - title: Locations
     
 - title: Usage

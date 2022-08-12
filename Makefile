@@ -58,7 +58,7 @@ serve_docs_site_lan: ## Run a local site (open for LAN)
 	@cd docs-site && npm run docs-serve-lan
 
 .PHONY: test
-test: ## Run test suite
+test: ## Run tests suite
 	@sh -c "$(CURDIR)/dotfiles_test.sh"
 
 help:
