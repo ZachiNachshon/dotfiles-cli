@@ -1,1 +1,2 @@
-docs-site/** linguist-documentation test_data
+docs-site/** linguist-documentation
+test_data linguist-documentation
