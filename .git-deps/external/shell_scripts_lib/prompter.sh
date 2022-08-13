@@ -126,7 +126,7 @@ prompt_user_input() {
     fi
 
     read input
-    
+
     if [[ -z "${input}" ]]; then
       if [[ -n "${default}" ]]; then
         input="${default}"
@@ -273,7 +273,7 @@ prompt_selection_allow_text() {
     else
       log_warning "No values to prompt, skipping"
     fi
-    echo "${result}"  
+    echo "${result}"
   else
     echo "no-prompt-selection"
   fi

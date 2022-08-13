@@ -16,7 +16,7 @@ source "${CURRENT_FOLDER_ABS_PATH}/logger.sh"
 #######################################
 cmd_run() {
   local cmd_string=$1
-  if is_debug; then  
+  if is_debug; then
     echo """
     ${cmd_string}
   """

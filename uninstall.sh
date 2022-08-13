@@ -4,7 +4,7 @@
 #  Basic:
 #    curl -sfL https://github.com/ZachiNachshon/dotfiles-cli/uninstall.sh | bash -
 #  Options:
-#    curl -sfL https://github.com/ZachiNachshon/dotfiles-cli/install.sh | DRY_RUN=true -
+#    curl -sfL https://github.com/ZachiNachshon/dotfiles-cli/uninstall.sh | DRY_RUN=true -
 #    DRY_RUN=true ./uninstall.sh
 
 # Run the install script in dry-run mode, no file system changes
@@ -157,9 +157,9 @@ print_dotfiles_cli_rc_file_removal_message() {
     rc_file_path="${ZSH_RC_PATH}"
   elif is_file_exist "${BASH_RC_PATH}"; then
     rc_file_path="${BASH_RC_PATH}"
-  elif is_file_exist "${BASH_PROFILE_PATH}"; then 
+  elif is_file_exist "${BASH_PROFILE_PATH}"; then
     rc_file_path="${BASH_PROFILE_PATH}"
-  fi 
+  fi
 
   echo -e """${COLOR_YELLOW}
 REQUIRED:

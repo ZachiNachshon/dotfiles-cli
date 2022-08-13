@@ -157,7 +157,7 @@ read_os_type_or_fail() {
 add_dotfiles_cli_header_to_rc_file() {
   local shell_in_use=$(is_shell_supported)
 
-  if [[ -z "${shell_in_use}" ]] ; then
+  if [[ -z "${shell_in_use}" ]]; then
     print_header_setup_for_unsupported_shell "${shell_in_use}"
   else
     local append_header_cmd=""
@@ -177,10 +177,10 @@ ${SHELL_RC_FILE_HEADER}
 
     if ! is_file_exist "${ZSH_RC_PATH}" && ! is_file_exist "${BASH_RC_PATH}" && ! is_file_exist "${BASH_PROFILE_PATH}"; then
       log_info "Cannot identify a supported shell RC file, creating a temporary one. rc_file: ${BASH_RC_PATH}"
-      cmd_run "echo -e '#!/bin/bash\n\n\necho \"dotfiles CLI starter RC file\"' >> \"${BASH_RC_PATH}\"" 
+      cmd_run "echo -e '#!/bin/bash\n\n\necho \"dotfiles CLI starter RC file\"' >> \"${BASH_RC_PATH}\""
     fi
 
-    if is_file_exist "${ZSH_RC_PATH}" && ! is_file_contain "${ZSH_RC_PATH}" "${rc_file_dotfiles_header_identifier}" ; then
+    if is_file_exist "${ZSH_RC_PATH}" && ! is_file_contain "${ZSH_RC_PATH}" "${rc_file_dotfiles_header_identifier}"; then
       log_info "Updating RC file header. rc_file: ${ZSH_RC_PATH}"
       local read_file_path="${ZSH_RC_PATH}"
       if is_symlink "${ZSH_RC_PATH}"; then
@@ -189,7 +189,7 @@ ${SHELL_RC_FILE_HEADER}
       cmd_run "${append_header_cmd} ${read_file_path}"
     fi
 
-    if is_file_exist "${BASH_RC_PATH}" && ! is_file_contain "${BASH_RC_PATH}" "${rc_file_dotfiles_header_identifier}" ; then
+    if is_file_exist "${BASH_RC_PATH}" && ! is_file_contain "${BASH_RC_PATH}" "${rc_file_dotfiles_header_identifier}"; then
       log_info "Updating RC file header. rc_file: ${BASH_RC_PATH}"
       local read_file_path="${BASH_RC_PATH}"
       if is_symlink "${BASH_RC_PATH}"; then
@@ -198,7 +198,7 @@ ${SHELL_RC_FILE_HEADER}
       cmd_run "${append_header_cmd} ${read_file_path}"
     fi
 
-    if is_file_exist "${BASH_PROFILE_PATH}" && ! is_file_contain "${BASH_PROFILE_PATH}" "${rc_file_dotfiles_header_identifier}" ; then
+    if is_file_exist "${BASH_PROFILE_PATH}" && ! is_file_contain "${BASH_PROFILE_PATH}" "${rc_file_dotfiles_header_identifier}"; then
       log_info "Updating RC file header. rc_file: ${BASH_PROFILE_PATH}"
       local read_file_path="${BASH_PROFILE_PATH}"
       if is_symlink "${BASH_PROFILE_PATH}"; then
@@ -230,8 +230,8 @@ ${COLOR_WHITE}GENERAL INFO${COLOR_NONE}:
 
 ${COLOR_WHITE}LOCATIONS${COLOR_NONE}:
 
-  ${COLOR_LIGHT_CYAN}Dotfiles Clone Path${COLOR_NONE}...: ${DOTFILES_REPO_LOCAL_PATH}
-  ${COLOR_LIGHT_CYAN}CLI Global Binary${COLOR_NONE}.....: ${DOTFILES_CLI_INSTALL_PATH}
+  ${COLOR_LIGHT_CYAN}Dotfiles Clone Path${COLOR_NONE}...: ${DOTFILES_REPO_LOCAL_PATH}      (Override with: ${COLOR_GREEN}DOTFILES_REPO_LOCAL_PATH${COLOR_NONE})
+  ${COLOR_LIGHT_CYAN}CLI Global Binary${COLOR_NONE}.....: ${DOTFILES_CLI_INSTALL_PATH}  (Override with: ${COLOR_GREEN}DOTFILES_CLI_INSTALL_PATH${COLOR_NONE})
 
 ${COLOR_WHITE}HOMEBREW PATHS${COLOR_NONE}:
 
@@ -329,14 +329,14 @@ print_local_versions_and_exit() {
 }
 
 reload_active_shell_session_and_exit() {
-  # Add if missing the shell RC file header to allow session reload 
+  # Add if missing the shell RC file header to allow session reload
   add_dotfiles_cli_header_to_rc_file
 
   # Session files are being sources directly from the shell RC file (zshrc, bashrc etc..)
   # For more information please refer to reload_session.sh
   local shell_in_use=$(shell_get_name)
   local reload_session_silent_option="False"
-  if is_silent; then 
+  if is_silent; then
     reload_session_silent_option="True"
   fi
 
@@ -383,14 +383,14 @@ change_dir_to_dotfiles_local_repo_and_exit() {
   if ! is_directory_exist "${DOTFILES_REPO_LOCAL_PATH}"; then
     print_empty_dotfiles_repo_folder
   else
-    log_info "Changing directory to ${DOTFILES_REPO_LOCAL_PATH}"  
+    log_info "Changing directory to ${DOTFILES_REPO_LOCAL_PATH}"
     cd "${DOTFILES_REPO_LOCAL_PATH}" || exit
 
     if ! is_dry_run; then
       # Read the following link to understand why we should use SHELL in here
       # https://unix.stackexchange.com/a/278080
       (export DOTFILES_CLI_SILENT_OPTION="True" && $SHELL)
-    else 
+    else
       log_info "(export DOTFILES_CLI_SILENT_OPTION=True && $SHELL)"
     fi
   fi
@@ -436,95 +436,95 @@ parse_program_arguments() {
 
   while test $# -gt 0; do
     case "$1" in
-    -h | --help)
-      print_help_menu_and_exit "$0"
-      shift
-      ;;
-    sync)
-      CLI_ARGUMENT_SYNC_COMMAND="sync"
-      shift
-      CLI_VALUE_SYNC_OPTION=$1
-      shift
-      ;;
-    unsync)
-      CLI_ARGUMENT_UNSYNC_COMMAND="unsync"
-      shift
-      CLI_VALUE_UNSYNC_OPTION=$1
-      shift
-      ;;
-    reload)
-      CLI_ARGUMENT_RELOAD_DOTFILES="reload"
-      shift
-      ;;
-    brew)
-      CLI_ARGUMENT_BREW_COMMAND="brew"
-      shift
-      CLI_VALUE_BREW_OPTION=$1
-      shift
-      ;;
-    plugins)
-      CLI_ARGUMENT_PLUGINS_COMMAND="plugins"
-      shift
-      CLI_VALUE_PLUGINS_OPTION=$1
-      shift
-      ;;
-    os)
-      CLI_ARGUMENT_OS_COMMAND="brew"
-      shift
-      CLI_VALUE_OS_OPTION=$1
-      shift
-      ;;
-    repo)
-      CLI_ARGUMENT_REPOSITORY="repo"
-      shift
-      ;;
-    config)
-      CLI_ARGUMENT_CONFIG="config"
-      shift
-      ;;
-    structure)
-      CLI_ARGUMENT_STRUCTURE="structure"
-      shift
-      ;;
-    link)
-      CLI_ARGUMENT_LINK_COMMAND="link"
-      shift
-      CLI_VALUE_LINK_CLONE_URL=$1
-      shift
-      # If the following argument is not a flag, it must be branch
-      if [[ "$1" != -* ]]; then
-        CLI_VALUE_LINK_BRANCH=$1
+      -h | --help)
+        print_help_menu_and_exit "$0"
         shift
-      fi
-      ;;
-    version)
-      CLI_ARGUMENT_VERSION="version"
-      shift
-      ;;
-    --dry-run)
-      # Used by logger.sh / reload_session.sh
-      export LOGGER_DRY_RUN="true"
-      shift
-      ;;
-    -y)
-      # Used by prompter.sh
-      export PROMPTER_SKIP_PROMPT="y"
-      shift
-      ;;
-    -v | --verbose)
-      # Used by logger.sh
-      export LOGGER_DEBUG="true"
-      shift
-      ;;
-    -s | --silent)
-      # Used by logger.sh / reload_session.sh
-      export LOGGER_SILENT="true"
-      shift
-      ;;
-    *)
-      print_help_menu_and_exit "$0"
-      shift
-      ;;
+        ;;
+      sync)
+        CLI_ARGUMENT_SYNC_COMMAND="sync"
+        shift
+        CLI_VALUE_SYNC_OPTION=$1
+        shift
+        ;;
+      unsync)
+        CLI_ARGUMENT_UNSYNC_COMMAND="unsync"
+        shift
+        CLI_VALUE_UNSYNC_OPTION=$1
+        shift
+        ;;
+      reload)
+        CLI_ARGUMENT_RELOAD_DOTFILES="reload"
+        shift
+        ;;
+      brew)
+        CLI_ARGUMENT_BREW_COMMAND="brew"
+        shift
+        CLI_VALUE_BREW_OPTION=$1
+        shift
+        ;;
+      plugins)
+        CLI_ARGUMENT_PLUGINS_COMMAND="plugins"
+        shift
+        CLI_VALUE_PLUGINS_OPTION=$1
+        shift
+        ;;
+      os)
+        CLI_ARGUMENT_OS_COMMAND="brew"
+        shift
+        CLI_VALUE_OS_OPTION=$1
+        shift
+        ;;
+      repo)
+        CLI_ARGUMENT_REPOSITORY="repo"
+        shift
+        ;;
+      config)
+        CLI_ARGUMENT_CONFIG="config"
+        shift
+        ;;
+      structure)
+        CLI_ARGUMENT_STRUCTURE="structure"
+        shift
+        ;;
+      link)
+        CLI_ARGUMENT_LINK_COMMAND="link"
+        shift
+        CLI_VALUE_LINK_CLONE_URL=$1
+        shift
+        # If the following argument is not a flag, it must be branch
+        if [[ "$1" != -* ]]; then
+          CLI_VALUE_LINK_BRANCH=$1
+          shift
+        fi
+        ;;
+      version)
+        CLI_ARGUMENT_VERSION="version"
+        shift
+        ;;
+      --dry-run)
+        # Used by logger.sh / reload_session.sh
+        export LOGGER_DRY_RUN="true"
+        shift
+        ;;
+      -y)
+        # Used by prompter.sh
+        export PROMPTER_SKIP_PROMPT="y"
+        shift
+        ;;
+      -v | --verbose)
+        # Used by logger.sh
+        export LOGGER_DEBUG="true"
+        shift
+        ;;
+      -s | --silent)
+        # Used by logger.sh / reload_session.sh
+        export LOGGER_SILENT="true"
+        shift
+        ;;
+      *)
+        print_help_menu_and_exit "$0"
+        shift
+        ;;
     esac
   done
 }
@@ -553,57 +553,52 @@ verify_program_arguments() {
 
 check_invalid_sync_command_value() {
   # If sync command is not empty and its value is empty or a flag - not valid
-  [[ -n "${CLI_ARGUMENT_SYNC_COMMAND}" && (-z "${CLI_VALUE_SYNC_OPTION}" || "${CLI_VALUE_SYNC_OPTION}" == -*) ]] \
-  || \
-  # If sync options are not part of the valid values
-  [[ -n "${CLI_ARGUMENT_SYNC_COMMAND}" && ( \
-    "${CLI_VALUE_SYNC_OPTION}" != "home" && \
-    "${CLI_VALUE_SYNC_OPTION}" != "shell" && \
-    "${CLI_VALUE_SYNC_OPTION}" != "all") ]]
+  [[ -n "${CLI_ARGUMENT_SYNC_COMMAND}" && (-z "${CLI_VALUE_SYNC_OPTION}" || "${CLI_VALUE_SYNC_OPTION}" == -*) ]] ||
+    # If sync options are not part of the valid values
+    [[ -n "${CLI_ARGUMENT_SYNC_COMMAND}" && (
+      "${CLI_VALUE_SYNC_OPTION}" != "home" &&
+      "${CLI_VALUE_SYNC_OPTION}" != "shell" &&
+      "${CLI_VALUE_SYNC_OPTION}" != "all") ]]
 }
 
 check_invalid_unsync_command_value() {
   # If unsync command is not empty and its value is empty or a flag - not valid
-  [[ -n "${CLI_ARGUMENT_UNSYNC_COMMAND}" && (-z "${CLI_VALUE_UNSYNC_OPTION}" || "${CLI_VALUE_UNSYNC_OPTION}" == -*) ]] \
-  || \
-  # If unsync options are not part of the valid values
-  [[ -n "${CLI_ARGUMENT_UNSYNC_COMMAND}" && ( \
-    "${CLI_VALUE_UNSYNC_OPTION}" != "home" && \
-    "${CLI_VALUE_UNSYNC_OPTION}" != "shell" && \
-    "${CLI_VALUE_UNSYNC_OPTION}" != "all") ]]
+  [[ -n "${CLI_ARGUMENT_UNSYNC_COMMAND}" && (-z "${CLI_VALUE_UNSYNC_OPTION}" || "${CLI_VALUE_UNSYNC_OPTION}" == -*) ]] ||
+    # If unsync options are not part of the valid values
+    [[ -n "${CLI_ARGUMENT_UNSYNC_COMMAND}" && (
+      "${CLI_VALUE_UNSYNC_OPTION}" != "home" &&
+      "${CLI_VALUE_UNSYNC_OPTION}" != "shell" &&
+      "${CLI_VALUE_UNSYNC_OPTION}" != "all") ]]
 }
 
 check_invalid_brew_command_value() {
   # If brew command is not empty and its value is empty or a flag - not valid
-  [[ -n "${CLI_ARGUMENT_BREW_COMMAND}" && (-z "${CLI_VALUE_BREW_OPTION}" || "${CLI_VALUE_BREW_OPTION}" == -*) ]] \
-  || \
-  # If brew options are not part of the valid values
-  [[ -n "${CLI_ARGUMENT_BREW_COMMAND}" && ( \
-    "${CLI_VALUE_BREW_OPTION}" != "packages" && \
-    "${CLI_VALUE_BREW_OPTION}" != "casks" && \
-    "${CLI_VALUE_BREW_OPTION}" != "drivers" && \
-    "${CLI_VALUE_BREW_OPTION}" != "services" && \
-    "${CLI_VALUE_BREW_OPTION}" != "all") ]]
+  [[ -n "${CLI_ARGUMENT_BREW_COMMAND}" && (-z "${CLI_VALUE_BREW_OPTION}" || "${CLI_VALUE_BREW_OPTION}" == -*) ]] ||
+    # If brew options are not part of the valid values
+    [[ -n "${CLI_ARGUMENT_BREW_COMMAND}" && (
+      "${CLI_VALUE_BREW_OPTION}" != "packages" &&
+      "${CLI_VALUE_BREW_OPTION}" != "casks" &&
+      "${CLI_VALUE_BREW_OPTION}" != "drivers" &&
+      "${CLI_VALUE_BREW_OPTION}" != "services" &&
+      "${CLI_VALUE_BREW_OPTION}" != "all") ]]
 }
 
 check_invalid_plugins_command_value() {
   # If plugins command is not empty and its value is empty or a flag - not valid
-  [[ -n "${CLI_ARGUMENT_PLUGINS_COMMAND}" && (-z "${CLI_VALUE_PLUGINS_OPTION}" || "${CLI_VALUE_PLUGINS_OPTION}" == -*) ]] \
-  || \
-  # If plugins options are not part of the valid values
-  [[ -n "${CLI_ARGUMENT_PLUGINS_COMMAND}" && ( \
-    "${CLI_VALUE_PLUGINS_OPTION}" != "bash" && \
-    "${CLI_VALUE_PLUGINS_OPTION}" != "zsh") ]]
+  [[ -n "${CLI_ARGUMENT_PLUGINS_COMMAND}" && (-z "${CLI_VALUE_PLUGINS_OPTION}" || "${CLI_VALUE_PLUGINS_OPTION}" == -*) ]] ||
+    # If plugins options are not part of the valid values
+    [[ -n "${CLI_ARGUMENT_PLUGINS_COMMAND}" && (
+      "${CLI_VALUE_PLUGINS_OPTION}" != "bash" &&
+      "${CLI_VALUE_PLUGINS_OPTION}" != "zsh") ]]
 }
 
 check_invalid_os_command_value() {
   # If os command is not empty and its value is empty or a flag - not valid
-  [[ -n "${CLI_ARGUMENT_OS_COMMAND}" && (-z "${CLI_VALUE_OS_OPTION}" || "${CLI_VALUE_OS_OPTION}" == -*) ]] \
-  || \
-  # If os options are not part of the valid values
-  [[ -n "${CLI_ARGUMENT_OS_COMMAND}" && ( \
-    "${CLI_VALUE_OS_OPTION}" != "mac" && \
-    "${CLI_VALUE_OS_OPTION}" != "linux") ]]
+  [[ -n "${CLI_ARGUMENT_OS_COMMAND}" && (-z "${CLI_VALUE_OS_OPTION}" || "${CLI_VALUE_OS_OPTION}" == -*) ]] ||
+    # If os options are not part of the valid values
+    [[ -n "${CLI_ARGUMENT_OS_COMMAND}" && (
+      "${CLI_VALUE_OS_OPTION}" != "mac" &&
+      "${CLI_VALUE_OS_OPTION}" != "linux") ]]
 }
 
 check_invalid_link_command_value() {

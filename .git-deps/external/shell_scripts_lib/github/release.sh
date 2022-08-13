@@ -67,7 +67,7 @@ delete_released_version() {
   if [[ -z ${tag} ]]; then
     exit 0
   fi
-  
+
   if [[ $(prompt_yes_no "Delete local and remote tag ${tag}" "critical") == "y" ]]; then
     log_info "Deleting local. tag: ${tag}"
     if is_debug; then

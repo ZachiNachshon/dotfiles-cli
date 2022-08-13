@@ -19,6 +19,6 @@ tar_archive() {
   local dest_folder=$3
   local exclusions=$("${all_args[@]:3}")
 
-  tar -czvf 
-#   tar --exclude='file1.txt' --exclude='folder1' -zcvf backup.tar.gz .
+  tar -czvf
+  #   tar --exclude='file1.txt' --exclude='folder1' -zcvf backup.tar.gz .
 }

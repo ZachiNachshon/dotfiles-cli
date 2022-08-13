@@ -54,7 +54,7 @@ brew_install_custom_taps() {
       continue
     fi
     cmd_run "brew tap ${tap_line}"
-  done < "${DOTFILES_REPO_BREW_CUSTOM_TAPS_PATH}"
+  done <"${DOTFILES_REPO_BREW_CUSTOM_TAPS_PATH}"
 }
 
 brew_update_outdated_plugins() {
@@ -76,7 +76,7 @@ Installing Package: ${pkg_line}
 ===================
 "
     cmd_run "brew install ${pkg_line}"
-  done < "${DOTFILES_REPO_BREW_PACKAGE_PATH}"
+  done <"${DOTFILES_REPO_BREW_PACKAGE_PATH}"
 }
 
 # Retrieve casks information:
@@ -96,7 +96,7 @@ Installing Cask: ${cask_line}
 ================
 "
     cmd_run "brew install --cask ${cask_line}"
-  done < "${DOTFILES_REPO_BREW_CASKS_PATH}"
+  done <"${DOTFILES_REPO_BREW_CASKS_PATH}"
 }
 
 brew_install_drivers() {
@@ -112,7 +112,7 @@ Installing Driver: ${driver_line}
 ==================
 "
     cmd_run "brew install --cask ${driver_line}"
-  done < "${DOTFILES_REPO_BREW_DRIVERS_PATH}"
+  done <"${DOTFILES_REPO_BREW_DRIVERS_PATH}"
 }
 
 brew_install_services() {
@@ -129,7 +129,7 @@ Installing Service: ${service_line}
 "
     cmd_run "brew install ${service_line}"
     cmd_run "brew services start ${service_line}"
-  done < "${DOTFILES_REPO_BREW_SERVICES_PATH}"
+  done <"${DOTFILES_REPO_BREW_SERVICES_PATH}"
 }
 
 run_homebrew_command() {
@@ -152,7 +152,7 @@ run_homebrew_command() {
     if [[ "${brew_option}" == "casks" || "${brew_option}" == "all" ]]; then
       brew_install_casks
     fi
-    
+
     if [[ "${brew_option}" == "drivers" || "${brew_option}" == "all" ]]; then
       brew_install_drivers
     fi
@@ -162,13 +162,12 @@ run_homebrew_command() {
     fi
 
     log_info "Dotfiles Homebrew command completed successfully"
-    
+
   else
     new_line
     log_info "Nothing was installed."
   fi
 }
-
 
 # Homebrew cheatsheet
 # -----------------------------------

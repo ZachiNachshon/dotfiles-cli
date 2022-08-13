@@ -43,7 +43,7 @@ evaluate_dry_run_mode() {
   if is_dry_run; then
     echo -e "${COLOR_YELLOW}Running in DRY RUN mode${COLOR_NONE}" >&2
     new_line
-  fi 
+  fi
 }
 
 _log_base() {
@@ -108,31 +108,31 @@ new_line() {
 }
 
 log_indicator_good() {
-local error_level_txt=""
+  local error_level_txt=""
   if is_dry_run; then
     error_level_txt+=" (Dry Run)"
   fi
   if ! is_silent; then
-    _log_base "${ICON_GOOD}${error_level_txt} " "$@" 
+    _log_base "${ICON_GOOD}${error_level_txt} " "$@"
   fi
 }
 
 log_indicator_warning() {
- local error_level_txt=""
+  local error_level_txt=""
   if is_dry_run; then
     error_level_txt+=" (Dry Run)"
   fi
   if ! is_silent; then
-    _log_base "${ICON_WARN}${error_level_txt} " "$@"  
+    _log_base "${ICON_WARN}${error_level_txt} " "$@"
   fi
 }
 
 log_indicator_bad() {
- local error_level_txt=""
+  local error_level_txt=""
   if is_dry_run; then
     error_level_txt+=" (Dry Run)"
   fi
   if ! is_silent; then
-    _log_base "${ICON_BAD}${error_level_txt} " "$@" 
+    _log_base "${ICON_BAD}${error_level_txt} " "$@"
   fi
 }

@@ -1,5 +1,7 @@
 default: help
 
+PROJECT_LOCATION=.
+
 .PHONY: create_tarball
 create_tarball: ## Create a tarball from local repository
 	@tar \
@@ -60,6 +62,13 @@ serve_docs_site_lan: ## Run a local site (open for LAN)
 .PHONY: test
 test: ## Run tests suite
 	@sh -c "$(CURDIR)/dotfiles_test.sh"
+
+.PHONY: fmt
+fmt: ## Format shell scripts using shfmt bash style (https://github.com/mvdan/sh)
+	@sh -c "'$(CURDIR)/external/shell_scripts_lib/runner/shfmt/shfmt.sh' \
+  		'working_dir: $(CURDIR)' \
+  		'shfmt_args: -w -ci -i=2 -ln=bash $(CURDIR)' \
+  		'debug'"
 
 help:
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'

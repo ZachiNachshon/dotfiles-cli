@@ -41,7 +41,7 @@ clone_repository() {
   if ! is_directory_exist "${clone_path}"; then
     log_info "Creating a new repository clone path. path: ${clone_path}"
     cmd_run "mkdir -p ${clone_path}"
-  fi 
+  fi
 
   log_info "Cloning repository. url: ${clone_url}, branch: ${clone_branch}"
   cmd_run "git -C ${clone_path} clone --branch ${clone_branch} --single-branch ${clone_url} --quiet"
@@ -65,10 +65,10 @@ run_link_command() {
     new_line
     clear_existing_dotfiles
     clone_repository \
-        "${CONFIG_FOLDER_PATH}" \
-        "${clone_url}" \
-        "${clone_branch}"
-    
+      "${CONFIG_FOLDER_PATH}" \
+      "${clone_url}" \
+      "${clone_branch}"
+
     new_line
     log_info "Dotfiles repository linked successfully"
     return 0

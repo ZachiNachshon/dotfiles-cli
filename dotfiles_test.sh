@@ -8,8 +8,8 @@
 
 # TODO: Need to run in a container with bash installed
 
-TEST_DATA_DOTFILES_REPO_PATH="${PWD}/test_data/dotfiles_repo"  
-TEST_DATA_DOTFILES_CLI_REPO_PATH="${PWD}"  
+TEST_DATA_DOTFILES_REPO_PATH="${PWD}/test_data/dotfiles_repo"
+TEST_DATA_DOTFILES_CLI_REPO_PATH="${PWD}"
 
 source "external/shell_scripts_lib/logger.sh"
 source "external/shell_scripts_lib/shell.sh"
@@ -42,7 +42,7 @@ test_dotfiles_version() {
   local expected_version=$(cat ./resources/version.txt)
 
   # And I check the dotfiles CLI version
-  ./dotfiles.sh version >& "${TEST_log}" ||
+  ./dotfiles.sh version >&"${TEST_log}" ||
     echo "Failed to run dotfiles command"
 
   # Then I expect the version to be equal
@@ -70,7 +70,7 @@ test_dotfiles_sync_all() {
   fi
 
   # And I sync all home and shell files
-  ./dotfiles.sh sync all --dry-run -y -v >& "${TEST_log}" ||
+  ./dotfiles.sh sync all --dry-run -y -v >&"${TEST_log}" ||
     echo "Failed to run dotfiles command"
 
   # Then I expect all symlinks to exists
@@ -100,7 +100,7 @@ test_dotfiles_sync_home() {
   fi
 
   # And I sync home files
-  ./dotfiles.sh sync home --dry-run -y -v >& "${TEST_log}" ||
+  ./dotfiles.sh sync home --dry-run -y -v >&"${TEST_log}" ||
     echo "Failed to run dotfiles command"
 
   # Then I expect home symlinks to exists
@@ -125,7 +125,7 @@ test_dotfiles_sync_shell() {
   fi
 
   # And I sync shell files
-  ./dotfiles.sh sync shell --dry-run -y -v >& "${TEST_log}" ||
+  ./dotfiles.sh sync shell --dry-run -y -v >&"${TEST_log}" ||
     echo "Failed to run dotfiles command"
 
   # Then I expect shell symlinks to exists
@@ -141,7 +141,7 @@ test_dotfiles_unsync_all() {
   local home_unlink_gitigonre="unlink ${HOME}/.gitignore_global"
   local home_unlink_vimrc="unlink ${HOME}/.vimrc"
   local home_unlink_gitconfig="unlink ${HOME}/.gitconfig"
-  
+
   local home_link_dummy=""
   local shell_link_dummy=""
 
@@ -154,7 +154,7 @@ test_dotfiles_unsync_all() {
   fi
 
   # And I unsync all home and shell files
-  ./dotfiles.sh unsync all --dry-run -y -v >& "${TEST_log}" ||
+  ./dotfiles.sh unsync all --dry-run -y -v >&"${TEST_log}" ||
     echo "Failed to run dotfiles command"
 
   # Then I expect all symlinks to get unlinked
@@ -184,7 +184,7 @@ test_dotfiles_unsync_home() {
   fi
 
   # And I unsync home files
-  ./dotfiles.sh unsync home --dry-run -y -v >& "${TEST_log}" ||
+  ./dotfiles.sh unsync home --dry-run -y -v >&"${TEST_log}" ||
     echo "Failed to run dotfiles command"
 
   # Then I expect home symlinks to get unlinked
@@ -209,7 +209,7 @@ test_dotfiles_unsync_shell() {
   fi
 
   # And I unsync shell files
-  ./dotfiles.sh unsync shell --dry-run -y -v >& "${TEST_log}" ||
+  ./dotfiles.sh unsync shell --dry-run -y -v >&"${TEST_log}" ||
     echo "Failed to run dotfiles command"
 
   # Then I expect shell symlinks to get unlinked
@@ -232,7 +232,7 @@ test_brew_prerequisites() {
   local brew_upgrade="brew upgrade"
 
   # And I run a brew command
-  ./dotfiles.sh brew packages --dry-run -y -v >& "${TEST_log}" ||
+  ./dotfiles.sh brew packages --dry-run -y -v >&"${TEST_log}" ||
     echo "Failed to run dotfiles command"
 
   # Then I expect all prerequisites to run
@@ -256,7 +256,7 @@ test_brew_pacakges() {
   local brew_install_pacakge_2="brew install dummy-package-2"
 
   # And I run a brew packages install command
-  ./dotfiles.sh brew packages --dry-run -y -v >& "${TEST_log}" ||
+  ./dotfiles.sh brew packages --dry-run -y -v >&"${TEST_log}" ||
     echo "Failed to run dotfiles command"
 
   # Then I expect all brew packages to get installed
@@ -274,7 +274,7 @@ test_brew_casks() {
   local brew_install_cask_2="brew install --cask dummy-cask-2"
 
   # And I run a brew casks install command
-  ./dotfiles.sh brew casks --dry-run -y -v >& "${TEST_log}" ||
+  ./dotfiles.sh brew casks --dry-run -y -v >&"${TEST_log}" ||
     echo "Failed to run dotfiles command"
 
   # Then I expect all brew casks to get installed
@@ -292,7 +292,7 @@ test_brew_drivers() {
   local brew_install_driver_2="brew install --cask dummy-driver-2"
 
   # And I run a brew drivers install command
-  ./dotfiles.sh brew drivers --dry-run -y -v >& "${TEST_log}" ||
+  ./dotfiles.sh brew drivers --dry-run -y -v >&"${TEST_log}" ||
     echo "Failed to run dotfiles command"
 
   # Then I expect all brew drivers to get installed
@@ -313,7 +313,7 @@ test_brew_services() {
   local brew_start_service_2="brew services start dummy-service-2"
 
   # And I run a brew services install command
-  ./dotfiles.sh brew services --dry-run -y -v >& "${TEST_log}" ||
+  ./dotfiles.sh brew services --dry-run -y -v >&"${TEST_log}" ||
     echo "Failed to run dotfiles command"
 
   # Then I expect all brew services to get installed and started
@@ -347,7 +347,7 @@ test_brew_all() {
   local brew_start_service_2="brew services start dummy-service-2"
 
   # And I run a brew services install command
-  ./dotfiles.sh brew all --dry-run -y -v >& "${TEST_log}" ||
+  ./dotfiles.sh brew all --dry-run -y -v >&"${TEST_log}" ||
     echo "Failed to run dotfiles command"
 
   # Then I expect all brew packages to get installed
@@ -379,7 +379,7 @@ test_os_mac() {
   local os_install_script_2="eval '${TEST_DATA_DOTFILES_REPO_PATH}/os/mac/dummy_2.sh'"
 
   # And I run a mac os scripts install command
-  ./dotfiles.sh os mac --dry-run -y -v >& "${TEST_log}" ||
+  ./dotfiles.sh os mac --dry-run -y -v >&"${TEST_log}" ||
     echo "Failed to run dotfiles command"
 
   # Then I expect mac os scripts to get evaluated
@@ -397,7 +397,7 @@ test_os_linux() {
   local os_install_script_2="eval '${TEST_DATA_DOTFILES_REPO_PATH}/os/linux/dummy_2.sh'"
 
   # And I run a linux os scripts install command
-  ./dotfiles.sh os linux --dry-run -y -v >& "${TEST_log}" ||
+  ./dotfiles.sh os linux --dry-run -y -v >&"${TEST_log}" ||
     echo "Failed to run dotfiles command"
 
   # Then I expect linux os scripts to get evaluated
@@ -415,7 +415,7 @@ test_plugins_zsh() {
   local plugins_zsh_script_2="eval '${TEST_DATA_DOTFILES_REPO_PATH}/plugins/zsh/dummy_2.sh'"
 
   # And I run a zsh plugins install command
-  ./dotfiles.sh plugins zsh --dry-run -y -v >& "${TEST_log}" ||
+  ./dotfiles.sh plugins zsh --dry-run -y -v >&"${TEST_log}" ||
     echo "Failed to run dotfiles command"
 
   # Then I expect zsh plugins scripts to get evaluated
@@ -433,7 +433,7 @@ test_plugins_bash() {
   local plugins_bash_script_2="eval '${TEST_DATA_DOTFILES_REPO_PATH}/plugins/bash/dummy_2.sh'"
 
   # And I run a bash plugins install command
-  ./dotfiles.sh plugins bash --dry-run -y -v >& "${TEST_log}" ||
+  ./dotfiles.sh plugins bash --dry-run -y -v >&"${TEST_log}" ||
     echo "Failed to run dotfiles command"
 
   # Then I expect bash plugins scripts to get evaluated
@@ -451,7 +451,7 @@ test_plugins_bash() {
   local plugins_bash_script_2="eval '${TEST_DATA_DOTFILES_REPO_PATH}/plugins/bash/dummy_2.sh'"
 
   # And I run a bash plugins install command
-  ./dotfiles.sh plugins bash --dry-run -y -v >& "${TEST_log}" ||
+  ./dotfiles.sh plugins bash --dry-run -y -v >&"${TEST_log}" ||
     echo "Failed to run dotfiles command"
 
   # Then I expect bash plugins scripts to get evaluated
@@ -467,8 +467,8 @@ test_reload_shell_session() {
   # Given I prepare the expected reload output
   local reload_output="(export DOTFILES_CLI_SILENT_OPTION=False && exec $SHELL)"
 
-  # And I run a reload command 
-  ./dotfiles.sh reload --dry-run -y -v >& "${TEST_log}" ||
+  # And I run a reload command
+  ./dotfiles.sh reload --dry-run -y -v >&"${TEST_log}" ||
     echo "Failed to run dotfiles command"
 
   # Then I expect the reload output to exist
@@ -483,8 +483,8 @@ test_change_dir_to_dotfiles_repo() {
   # Given I prepare the expected chagne dir output
   local change_dir_output="(export DOTFILES_CLI_SILENT_OPTION=True && $SHELL)"
 
-  # And I run a repo command 
-  ./dotfiles.sh repo --dry-run -y -v >& "${TEST_log}" ||
+  # And I run a repo command
+  ./dotfiles.sh repo --dry-run -y -v >&"${TEST_log}" ||
     echo "Failed to run dotfiles command"
 
   # Then I expect the repo change dir output to exist
@@ -503,8 +503,8 @@ test_link_dotfiles_repository_default_branch() {
   local prev_dotfile_removal="rm -rf ${DOTFILES_REPO_LOCAL_PATH}"
   local git_clone_command_custom_branch="git -C ${HOME}/.config clone --branch ${repo_branch} --single-branch ${repo_url} --quiet"
 
-  # And I run a link dotfiles repository command 
-  ./dotfiles.sh link "${repo_url}" --dry-run -y -v >& "${TEST_log}" ||
+  # And I run a link dotfiles repository command
+  ./dotfiles.sh link "${repo_url}" --dry-run -y -v >&"${TEST_log}" ||
     echo "Failed to run dotfiles command"
 
   # Then I expect the repo change dir output to exist
@@ -524,8 +524,8 @@ test_link_dotfiles_repository_custom_branch() {
   local prev_dotfile_removal="rm -rf ${DOTFILES_REPO_LOCAL_PATH}"
   local git_clone_command_custom_branch="git -C ${HOME}/.config clone --branch ${repo_branch} --single-branch ${repo_url} --quiet"
 
-  # And I run a link dotfiles repository command 
-  ./dotfiles.sh link "${repo_url}" "${repo_branch}" --dry-run -y -v >& "${TEST_log}" ||
+  # And I run a link dotfiles repository command
+  ./dotfiles.sh link "${repo_url}" "${repo_branch}" --dry-run -y -v >&"${TEST_log}" ||
     echo "Failed to run dotfiles command"
 
   # Then I expect the repo change dir output to exist

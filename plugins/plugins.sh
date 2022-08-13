@@ -25,7 +25,7 @@ plugins_print_banner() {
 eval_plugins_scripts() {
   local plugins_option=$1
   local plugins_folder_path="${PLUGINS_SCRIPTS_ROOT_FOLDER_PATH}/${plugins_option}"
-  
+
   if is_directory_empty "${plugins_folder_path}"; then
     log_warning "No plugins were found for shell. name: ${plugins_option}"
   else

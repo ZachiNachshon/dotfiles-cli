@@ -84,7 +84,7 @@ run_unsync_command() {
 
     new_line
     log_info "Dotfiles were unsynced successfully"
-    
+
   else
     new_line
     log_info "Nothing was unsynced."

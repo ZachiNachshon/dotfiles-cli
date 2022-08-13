@@ -25,11 +25,11 @@ _clean_test_environment() {
 }
 
 test_set_up() {
-  get_timestamp > "${TEST_TMPDIR}/__test_start"
+  get_timestamp >"${TEST_TMPDIR}/__test_start"
 }
 
 test_tear_down() {
-  get_timestamp > "${TEST_TMPDIR}/__test_end"
+  get_timestamp >"${TEST_TMPDIR}/__test_end"
   test_log_print_test_result
 }
 

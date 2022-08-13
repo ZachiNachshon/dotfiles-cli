@@ -152,7 +152,7 @@ adjust_global_executable_symlink() {
 
   log_info "Elevating executable permission. path: ${dotfiles_cli_script_path}"
   cmd_run "chmod +x ${dotfiles_cli_script_path}"
-  
+
   # macOS: ~/.local/bin/dotfiles --> ~/.config/dotfiles-cli/dotfiles.sh
   # Linux: ~/.local/bin/dotfiles --> ~/.config/dotfiles-cli/dotfiles.sh
   log_info "Linking executable to bin directory. symlink: ${dotfiles_cli_exec_bin_path}"
@@ -160,9 +160,9 @@ adjust_global_executable_symlink() {
 }
 
 copy_local_archive_to_config_path() {
-  if ! is_file_exist "${LOCAL_ARCHIVE_FILEPATH}"; then 
+  if ! is_file_exist "${LOCAL_ARCHIVE_FILEPATH}"; then
     log_fatal "Local archive file does not exist. path: ${LOCAL_ARCHIVE_FILEPATH}"
-  fi 
+  fi
 
   clear_previous_installation
   log_info "Installing dotfiles CLI from local artifact. path: ${LOCAL_ARCHIVE_FILEPATH}"

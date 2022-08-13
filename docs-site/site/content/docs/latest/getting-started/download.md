@@ -74,5 +74,36 @@ Clone `dotfiles-cli` repository into a directory of your choice and install:
 
 ```bash
 git clone https://github.com/ZachiNachshon/dotfiles-cli.git; cd dotfiles-cli; make install_from_respository
+```
 
+## Uninstall
+
+Instruction to uninstall `dotfiles-cli` based on installation method.
+
+**Homebrew**
+
+```bash
+brew remove dotfiles-cli
+```
+
+**Released Version**
+
+```bash
+curl -sfLS https://raw.githubusercontent.com/ZachiNachshon/dotfiles-cli/master/uninstall.sh | bash -
+```
+
+Available flags:
+{{< bs-table >}}
+| Flag | Description |
+| --- | --- |
+| `DRY_RUN` | Run all commands in dry-run mode without file system changes |
+{{< /bs-table >}}
+
+Example:
+
+```bash
+curl -sfLS \
+  https://raw.githubusercontent.com/ZachiNachshon/dotfiles-cli/master/uninstall.sh | \
+  DRY_RUN=True \
+  bash -
 ```

@@ -40,7 +40,7 @@ test_log_print_test_name() {
 }
 
 test_log_fail() {
-  get_timestamp > "${TEST_TMPDIR}/__test_end"
+  get_timestamp >"${TEST_TMPDIR}/__test_end"
   TEST_passed="False"
   test_log_print_test_result
   echo -e "$@" >"${TEST_TMPDIR}/__fail"

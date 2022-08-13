@@ -127,9 +127,9 @@ Recommended commands order for initial setup:
    dotfiles brew all
    ```
 
-| :bulb: Note |
-| :--------------------------------------- |
-| Run `dotfiles -h` for additional options. |
+   | :bulb: Note |
+   | :--------------------------------------- |
+   | Run `dotfiles -h` for additional options. |
    
 <br>
 

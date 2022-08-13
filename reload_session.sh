@@ -4,10 +4,10 @@
 # Author        Zachi Nachshon <zachi.nachshon@gmail.com>
 # Supported OS  Linux & macOS
 # Description   Source all session files under current shell session
-# Limitation    It is not possible to tamper with parent shell process 
+# Limitation    It is not possible to tamper with parent shell process
 #               from a nested shell.
 # Solution      The reload session command will source the relevant files
-#               while under the current shell session without creating 
+#               while under the current shell session without creating
 #               a nested shell session.
 #==============================================================================
 DOTFILES_REPO_LOCAL_PATH="${HOME}/.config/dotfiles"
@@ -28,7 +28,7 @@ is_debug() {
 is_silent() {
   if [[ -n ${DOTFILES_CLI_SILENT_OPTION} ]]; then
     # Execution from dotfiles CLI controls env var DOTFILES_CLI_SILENT_OPTION
-    [[ ${DOTFILES_CLI_SILENT_OPTION} == "True" ]]  
+    [[ ${DOTFILES_CLI_SILENT_OPTION} == "True" ]]
   else
     # Execution from shell RC files controls env var LOGGER_SILENT
     [[ -n ${LOGGER_SILENT} ]]
@@ -41,7 +41,7 @@ is_dry_run() {
 
 cmd_run() {
   local cmd_string=$1
-  if is_debug; then  
+  if is_debug; then
     echo """
     ${cmd_string}
   """
@@ -63,7 +63,7 @@ log_indicator_good() {
     log_txt+=" (Dry Run)"
   fi
   if ! is_silent; then
-    _log_indicator_base "${ICON_GOOD}${log_txt} " "$@" 
+    _log_indicator_base "${ICON_GOOD}${log_txt} " "$@"
   fi
 }
 
