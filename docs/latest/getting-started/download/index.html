@@ -330,6 +330,7 @@
     </li>
     <li><a href="#released-version">Released Version</a></li>
     <li><a href="#pre-built-release">Pre-Built Release</a></li>
+    <li><a href="#uninstall">Uninstall</a></li>
   </ul>
 </nav>
           </div>
@@ -394,7 +395,33 @@
 <h2 id="pre-built-release">Pre-Built Release <a class="anchor-link" href="#pre-built-release" aria-label="Link to this section: Pre-Built Release"></a></h2>
 <p>Clone <code>dotfiles-cli</code> repository into a directory of your choice and install:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">git clone https://github.com/ZachiNachshon/dotfiles-cli.git<span class="p">;</span> <span class="nb">cd</span> dotfiles-cli<span class="p">;</span> make install_from_respository
-
+</code></pre></div><h2 id="uninstall">Uninstall <a class="anchor-link" href="#uninstall" aria-label="Link to this section: Uninstall"></a></h2>
+<p>Instruction to uninstall <code>dotfiles-cli</code> based on installation method.</p>
+<p><strong>Homebrew</strong></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">brew remove dotfiles-cli
+</code></pre></div><p><strong>Released Version</strong></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">curl -sfLS https://raw.githubusercontent.com/ZachiNachshon/dotfiles-cli/master/uninstall.sh <span class="p">|</span> bash -
+</code></pre></div><p>Available flags:
+<div class="table-responsive"><table class="table">
+<thead>
+<tr>
+<th>Flag</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>DRY_RUN</code></td>
+<td>Run all commands in dry-run mode without file system changes</td>
+</tr>
+</tbody>
+</table></div>
+</p>
+<p>Example:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">curl -sfLS <span class="se">\
+</span><span class="se"></span>  https://raw.githubusercontent.com/ZachiNachshon/dotfiles-cli/master/uninstall.sh <span class="p">|</span> <span class="se">\
+</span><span class="se"></span>  <span class="nv">DRY_RUN</span><span class="o">=</span>True <span class="se">\
+</span><span class="se"></span>  bash -
 </code></pre></div>
       </div>
     </main>
