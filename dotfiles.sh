@@ -329,37 +329,53 @@ print_local_versions_and_exit() {
 }
 
 reload_active_shell_session_and_exit() {
-  # Add if missing the shell RC file header to allow session reload
-  add_dotfiles_cli_header_to_rc_file
-
-  # Session files are being sources directly from the shell RC file (zshrc, bashrc etc..)
-  # For more information please refer to reload_session.sh
-  local shell_in_use=$(shell_get_name)
-  local reload_session_silent_option="False"
-  if is_silent; then
-    reload_session_silent_option="True"
-  fi
-
-  if ! is_dry_run; then
-    (export DOTFILES_CLI_SILENT_OPTION=${reload_session_silent_option} && exec ${shell_in_use})
+  if ! is_directory_exist "${DOTFILES_REPO_LOCAL_PATH}"; then
+    print_empty_dotfiles_repo_folder
   else
-    log_info "(export DOTFILES_CLI_SILENT_OPTION=${reload_session_silent_option} && exec ${shell_in_use})"
+    # Add if missing the shell RC file header to allow session reload
+    add_dotfiles_cli_header_to_rc_file
+
+    # Session files are being sources directly from the shell RC file (zshrc, bashrc etc..)
+    # For more information please refer to reload_session.sh
+    local shell_in_use=$(shell_get_name)
+    local reload_session_silent_option="False"
+    if is_silent; then
+      reload_session_silent_option="True"
+    fi
+
+    if ! is_dry_run; then
+      (export DOTFILES_CLI_SILENT_OPTION=${reload_session_silent_option} && exec ${shell_in_use})
+    else
+      log_info "(export DOTFILES_CLI_SILENT_OPTION=${reload_session_silent_option} && exec ${shell_in_use})"
+    fi
   fi
   exit 0
 }
 
 run_brew_command_and_exit() {
-  run_homebrew_command "${CLI_VALUE_BREW_OPTION}"
+  if ! is_directory_exist "${DOTFILES_REPO_LOCAL_PATH}"; then
+    print_empty_dotfiles_repo_folder
+  else
+    run_homebrew_command "${CLI_VALUE_BREW_OPTION}"
+  fi
   exit 0
 }
 
 run_plugins_command_and_exit() {
-  run_plugins_command "${CLI_VALUE_PLUGINS_OPTION}"
+  if ! is_directory_exist "${DOTFILES_REPO_LOCAL_PATH}"; then
+    print_empty_dotfiles_repo_folder
+  else
+    run_plugins_command "${CLI_VALUE_PLUGINS_OPTION}"
+  fi
   exit 0
 }
 
 run_unsync_command_and_exit() {
-  run_unsync_command "${CLI_VALUE_UNSYNC_OPTION}"
+  if ! is_directory_exist "${DOTFILES_REPO_LOCAL_PATH}"; then
+    print_empty_dotfiles_repo_folder
+  else
+    run_unsync_command "${CLI_VALUE_UNSYNC_OPTION}"
+  fi
   exit 0
 }
 
@@ -627,11 +643,15 @@ main() {
   fi
 
   if is_sync_dotfiles; then
-    if run_sync_command "${CLI_VALUE_SYNC_OPTION}"; then
-      # Reload shell session only on successful sync
-      log_info "Reloading active shell"
-      new_line
-      reload_active_shell_session_and_exit
+    if ! is_directory_exist "${DOTFILES_REPO_LOCAL_PATH}"; then
+      print_empty_dotfiles_repo_folder
+    else
+      if run_sync_command "${CLI_VALUE_SYNC_OPTION}"; then
+        # Reload shell session only on successful sync
+        log_info "Reloading active shell"
+        new_line
+        reload_active_shell_session_and_exit
+      fi
     fi
   fi
 

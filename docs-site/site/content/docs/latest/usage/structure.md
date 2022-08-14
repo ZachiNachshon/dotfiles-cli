@@ -98,6 +98,13 @@ The `dotfiles` folder contains files to source on every new shell session and in
 dotfiles reload
 ```
 
+<br>
+
+##### Transient files
+
+If files in `transient` directory exists, they will be sourced along but won't get symlinked anywhere.
+You can use this to export ENV vars with sensitive information such as secrets to become available on any newly opened shells. Files under transient folder are git ignored by default to prevent from committing to a public repository.
+
 ## `os`
 
 Update OS settings and preferences, the `os` folder contains scripts that configure the presonal settings and preferences for mac / linux operating systems.
