@@ -1,4 +1,4 @@
-<h3 align="center" id="git-deps-syncer-logo"><img src="docs-site/site/static/docs/latest/assets/brand/dotfiles-cli.svg" height="300"></h3>
+<h3 align="center" id="dotfiles-cli-logo"><img src="docs-site/site/static/docs/latest/assets/brand/dotfiles-cli.svg" height="300"></h3>
 
 <p align="center">
   <a href="https://github.com/ZachiNachshon/dotfiles-cli/actions/workflows/ci.yaml/badge.svg?branch=master">
