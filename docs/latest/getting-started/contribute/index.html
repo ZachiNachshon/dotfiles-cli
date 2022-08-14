@@ -403,11 +403,19 @@ Docs site is using npm scripts to build the documentation and compile source fil
 </tr>
 <tr>
 <td><code>serve_docs_site</code></td>
-<td>Run a local site</td>
+<td>Run a local docs site</td>
 </tr>
 <tr>
 <td><code>serve_docs_site_lan</code></td>
-<td>Run a local site (open for LAN)</td>
+<td>Run a local docs site (open for LAN)</td>
+</tr>
+<tr>
+<td><code>test</code></td>
+<td>Run tests suite</td>
+</tr>
+<tr>
+<td><code>fmt</code></td>
+<td>Format shell scripts using shfmt bash style (<a href="https://github.com/mvdan/sh">https://github.com/mvdan/sh</a>)</td>
 </tr>
 </tbody>
 </table></div>
@@ -421,7 +429,7 @@ Note that some of those development actions require write access to the reposito
 <p><strong>How to run a test suite?</strong></p>
 <ol>
 <li>Clone the <code>dotfiles-cli</code> repository</li>
-<li>Run <code>make tests</code> to run the tests suite</li>
+<li>Run <code>make test</code> to run the tests suite</li>
 </ol>
 <h2 id="documentation-scripts">Documentation Scripts <a class="anchor-link" href="#documentation-scripts" aria-label="Link to this section: Documentation Scripts"></a></h2>
 <p>The <code>/docs-site/package.json</code> includes numerous tasks for developing the documentation site. Run <code>npm run</code> to see all the available npm scripts in your terminal. Primary tasks include:</p>
@@ -449,13 +457,30 @@ Note that some of those development actions require write access to the reposito
 </table></div>
 
 <h2 id="local-documentation">Local documentation <a class="anchor-link" href="#local-documentation" aria-label="Link to this section: Local documentation"></a></h2>
-<p>Running our documentation locally requires the use of Hugo, which gets installed via the <code>hugo-bin</code> npm package. Hugo is a blazingly fast and quite extensible static site generator. Here’s how to get it started:</p>
+<p>Running the documentation locally requires the use of Hugo, which gets installed via the <code>hugo-bin</code> npm package. Hugo is a blazingly fast and quite extensible static site generator. Here’s how to get it started:</p>
 <ul>
 <li>Run through the <a href="#tooling-setup">tooling setup</a> above to install all dependencies</li>
 <li>Navigate to <code>/docs-site</code> directory and run <code>npm install</code> to install local dependencies listed in <code>package.json</code></li>
-<li>From <code>/docs-site</code> directory, run <code>npm run docs-serve</code> in the command line</li>
+</ul>
+<p><strong>Checking site on browser:</strong></p>
+<ul>
+<li>From the repository root folder run <code>make serve_docs_site</code></li>
 <li>Open <a href="http://localhost:9001/dotfiles-cli">http://localhost:9001/dotfiles-cli</a> in your browser</li>
 </ul>
+<p><strong>Checking site on mobile (via LAN):</strong></p>
+<ul>
+<li>
+<p>From the repository root folder run <code>make serve_docs_site_lan</code></p>
+</li>
+<li>
+<p>Open <a href="http://192.168.xx.xx:9001">http://192.168.xx.xx:9001</a> in your mobile browser</p>
+<div class="bd-callout bd-callout-warning">
+Make sure to update the <code>--baseURL</code> IP address on the <code>package.json</code> file under <code>docs-serve-lan</code> task.
+</div>
+
+</li>
+</ul>
+<br>
 <p>Learn more about using Hugo by reading its <a href="https://gohugo.io/documentation/">documentation</a>.</p>
 
       </div>

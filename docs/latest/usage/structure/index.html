@@ -333,6 +333,7 @@
               <ul>
                 <li><a href="#symlinks-to-home">Symlinks to <code>$HOME</code></a></li>
                 <li><a href="#reload-shell-session">Reload shell session</a></li>
+                <li><a href="#transient-files">Transient files</a></li>
               </ul>
             </li>
           </ul>
@@ -414,7 +415,11 @@ Get a reminder on the expected dotfiles repository structure from the CLI by run
 <p>The <code>dotfiles</code> folder contains files to source on every new shell session and in case of changes a reload command is available as well.</p>
 <p><strong>Usage:</strong></p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">dotfiles reload
-</code></pre></div><h2 id="os"><code>os</code> <a class="anchor-link" href="#os" aria-label="Link to this section: os"></a></h2>
+</code></pre></div><br>
+<h5 id="transient-files">Transient files <a class="anchor-link" href="#transient-files" aria-label="Link to this section: Transient files"></a></h5>
+<p>If files in <code>transient</code> directory exists, they will be sourced along but won&rsquo;t get symlinked anywhere.
+You can use this to export ENV vars with sensitive information such as secrets to become available on any newly opened shells. Files under transient folder are git ignored by default to prevent from committing to a public repository.</p>
+<h2 id="os"><code>os</code> <a class="anchor-link" href="#os" aria-label="Link to this section: os"></a></h2>
 <p>Update OS settings and preferences, the <code>os</code> folder contains scripts that configure the presonal settings and preferences for mac / linux operating systems.</p>
 <p><strong>Usage:</strong></p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">dotfiles os &lt;linux/mac&gt;
