@@ -44,6 +44,6 @@ Available flags to control commands execution.
 
 Example of a user prompt message upon `sync-all`:
 
-<div class="col-lg-6">
-   <img style="vertical-align: top;" src="/docs/latest/assets/img/sync-home-prompt-message.svg" width="800" >
+<div>
+   <img class="img-fluid mt-3 mx-auto" style="vertical-align: top;" src="/docs/latest/assets/img/sync-home-prompt-message.svg" width="700" height="600" loading="lazy">
 </div>
