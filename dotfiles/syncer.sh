@@ -6,11 +6,14 @@
 # Description   Create symlinks from the dotfiles repository
 #               (options: home/shell/all)
 #==============================================================================
-source "${DOTFILES_CLI_INSTALL_PATH}/external/shell_scripts_lib/logger.sh"
-source "${DOTFILES_CLI_INSTALL_PATH}/external/shell_scripts_lib/prompter.sh"
-source "${DOTFILES_CLI_INSTALL_PATH}/external/shell_scripts_lib/io.sh"
-source "${DOTFILES_CLI_INSTALL_PATH}/external/shell_scripts_lib/strings.sh"
-source "${DOTFILES_CLI_INSTALL_PATH}/external/shell_scripts_lib/shell.sh"
+SYNCER_CURRENT_FOLDER_ABS_PATH=$(dirname "${BASH_SOURCE[0]}")
+SYNCER_ROOT_FOLDER_ABS_PATH=$(dirname "${SYNCER_CURRENT_FOLDER_ABS_PATH}")
+
+source "${SYNCER_ROOT_FOLDER_ABS_PATH}/external/shell_scripts_lib/logger.sh"
+source "${SYNCER_ROOT_FOLDER_ABS_PATH}/external/shell_scripts_lib/prompter.sh"
+source "${SYNCER_ROOT_FOLDER_ABS_PATH}/external/shell_scripts_lib/io.sh"
+source "${SYNCER_ROOT_FOLDER_ABS_PATH}/external/shell_scripts_lib/strings.sh"
+source "${SYNCER_ROOT_FOLDER_ABS_PATH}/external/shell_scripts_lib/shell.sh"
 
 DOTFILES_REPO_SYNCER_HOME_PATH="${DOTFILES_REPO_LOCAL_PATH}/dotfiles/home"
 DOTFILES_REPO_SYNCER_SHELL_PATH="${DOTFILES_REPO_LOCAL_PATH}/dotfiles/shell"

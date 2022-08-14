@@ -10,7 +10,8 @@
 #               while under the current shell session without creating
 #               a nested shell session.
 #==============================================================================
-DOTFILES_REPO_LOCAL_PATH="${HOME}/.config/dotfiles"
+CONFIG_FOLDER_PATH="${HOME}/.config"
+DOTFILES_REPO_LOCAL_PATH=${DOTFILES_REPO_LOCAL_PATH:-"${CONFIG_FOLDER_PATH}/dotfiles"}
 
 DOTFILES_REPO_SYNCER_TRANSIENT_HOME_PATH="${DOTFILES_REPO_LOCAL_PATH}/dotfiles/transient"
 DOTFILES_REPO_SYNCER_SESSION_PATH="${DOTFILES_REPO_LOCAL_PATH}/dotfiles/session"
@@ -69,11 +70,13 @@ log_indicator_good() {
 
 _source_files_from_path() {
   local files_path=$1
-  for file_path in "${files_path}"/.[^.]*; do
-    # filename=$(basename "${file_path}")
-    # echo "filename: ${filename}"
-    cmd_run "source "${file_path}""
-  done
+  if [[ -d ${files_path} ]]; then
+    for file_path in "${files_path}"/.[^.]*; do
+      # filename=$(basename "${file_path}")
+      # echo "filename: ${filename}"
+      cmd_run "source "${file_path}""
+    done
+  fi
 }
 
 _reload_source_transient_files() {

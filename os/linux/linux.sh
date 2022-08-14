@@ -4,10 +4,13 @@
 # Description  Customize Linux settings preferences
 # Author       Zachi Nachshon <zachi.nachshon@gmail.com>
 #==============================================================================
+LINUX_CURRENT_FOLDER_ABS_PATH=$(dirname "${BASH_SOURCE[0]}")
+LINUX_OS_FOLDER_ABS_PATH=$(dirname "${LINUX_CURRENT_FOLDER_ABS_PATH}")
+LINUX_ROOT_FOLDER_ABS_PATH=$(dirname "${LINUX_OS_FOLDER_ABS_PATH}")
 
-source "${DOTFILES_CLI_INSTALL_PATH}/external/shell_scripts_lib/logger.sh"
-source "${DOTFILES_CLI_INSTALL_PATH}/external/shell_scripts_lib/io.sh"
-source "${DOTFILES_CLI_INSTALL_PATH}/external/shell_scripts_lib/cmd.sh"
+source "${LINUX_ROOT_FOLDER_ABS_PATH}/external/shell_scripts_lib/logger.sh"
+source "${LINUX_ROOT_FOLDER_ABS_PATH}/external/shell_scripts_lib/io.sh"
+source "${LINUX_ROOT_FOLDER_ABS_PATH}/external/shell_scripts_lib/cmd.sh"
 
 LINUX_SCRIPTS_FOLDER_PATH="${DOTFILES_REPO_LOCAL_PATH}/os/linux"
 

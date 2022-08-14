@@ -6,23 +6,24 @@
 # Description   Load plugins and scripts in a centralized place instead of
 #               having scattered load commands on shell-rc file(s).
 #==============================================================================
+DOTFILES_CURRENT_FOLDER_ABS_PATH=$(dirname "${BASH_SOURCE[0]}")
+
+source "${DOTFILES_CURRENT_FOLDER_ABS_PATH}/brew/brew.sh"
+source "${DOTFILES_CURRENT_FOLDER_ABS_PATH}/linker/linker.sh"
+source "${DOTFILES_CURRENT_FOLDER_ABS_PATH}/dotfiles/syncer.sh"
+source "${DOTFILES_CURRENT_FOLDER_ABS_PATH}/dotfiles/unsyncer.sh"
+source "${DOTFILES_CURRENT_FOLDER_ABS_PATH}/os/mac/mac.sh"
+source "${DOTFILES_CURRENT_FOLDER_ABS_PATH}/os/linux/linux.sh"
+source "${DOTFILES_CURRENT_FOLDER_ABS_PATH}/plugins/plugins.sh"
+source "${DOTFILES_CURRENT_FOLDER_ABS_PATH}/external/shell_scripts_lib/logger.sh"
+source "${DOTFILES_CURRENT_FOLDER_ABS_PATH}/external/shell_scripts_lib/git.sh"
+source "${DOTFILES_CURRENT_FOLDER_ABS_PATH}/external/shell_scripts_lib/io.sh"
+source "${DOTFILES_CURRENT_FOLDER_ABS_PATH}/external/shell_scripts_lib/shell.sh"
+source "${DOTFILES_CURRENT_FOLDER_ABS_PATH}/external/shell_scripts_lib/os.sh"
 
 CONFIG_FOLDER_PATH="${HOME}/.config"
 DOTFILES_CLI_INSTALL_PATH=${DOTFILES_CLI_INSTALL_PATH:-"${CONFIG_FOLDER_PATH}/dotfiles-cli"}
 DOTFILES_REPO_LOCAL_PATH=${DOTFILES_REPO_LOCAL_PATH:-"${CONFIG_FOLDER_PATH}/dotfiles"}
-
-source "${DOTFILES_CLI_INSTALL_PATH}/brew/brew.sh"
-source "${DOTFILES_CLI_INSTALL_PATH}/linker/linker.sh"
-source "${DOTFILES_CLI_INSTALL_PATH}/dotfiles/syncer.sh"
-source "${DOTFILES_CLI_INSTALL_PATH}/dotfiles/unsyncer.sh"
-source "${DOTFILES_CLI_INSTALL_PATH}/os/mac/mac.sh"
-source "${DOTFILES_CLI_INSTALL_PATH}/os/linux/linux.sh"
-source "${DOTFILES_CLI_INSTALL_PATH}/plugins/plugins.sh"
-source "${DOTFILES_CLI_INSTALL_PATH}/external/shell_scripts_lib/logger.sh"
-source "${DOTFILES_CLI_INSTALL_PATH}/external/shell_scripts_lib/git.sh"
-source "${DOTFILES_CLI_INSTALL_PATH}/external/shell_scripts_lib/io.sh"
-source "${DOTFILES_CLI_INSTALL_PATH}/external/shell_scripts_lib/shell.sh"
-source "${DOTFILES_CLI_INSTALL_PATH}/external/shell_scripts_lib/os.sh"
 
 SCRIPT_MENU_TITLE="Dotfiles"
 

@@ -5,11 +5,14 @@
 # Supported OS  Linux & macOS
 # Description   Install/upgrade Homebrew packages/casks/services/drivers
 #==============================================================================
-source "${DOTFILES_CLI_INSTALL_PATH}/external/shell_scripts_lib/logger.sh"
-source "${DOTFILES_CLI_INSTALL_PATH}/external/shell_scripts_lib/cmd.sh"
-source "${DOTFILES_CLI_INSTALL_PATH}/external/shell_scripts_lib/prompter.sh"
-source "${DOTFILES_CLI_INSTALL_PATH}/external/shell_scripts_lib/io.sh"
-source "${DOTFILES_CLI_INSTALL_PATH}/external/shell_scripts_lib/strings.sh"
+BREW_CURRENT_FOLDER_ABS_PATH=$(dirname "${BASH_SOURCE[0]}")
+BREW_ROOT_FOLDER_ABS_PATH=$(dirname "${BREW_CURRENT_FOLDER_ABS_PATH}")
+
+source "${BREW_ROOT_FOLDER_ABS_PATH}/external/shell_scripts_lib/logger.sh"
+source "${BREW_ROOT_FOLDER_ABS_PATH}/external/shell_scripts_lib/cmd.sh"
+source "${BREW_ROOT_FOLDER_ABS_PATH}/external/shell_scripts_lib/prompter.sh"
+source "${BREW_ROOT_FOLDER_ABS_PATH}/external/shell_scripts_lib/io.sh"
+source "${BREW_ROOT_FOLDER_ABS_PATH}/external/shell_scripts_lib/strings.sh"
 
 DOTFILES_REPO_BREW_PACKAGE_PATH="${DOTFILES_REPO_LOCAL_PATH}/brew/packages.txt"
 DOTFILES_REPO_BREW_CASKS_PATH="${DOTFILES_REPO_LOCAL_PATH}/brew/casks.txt"

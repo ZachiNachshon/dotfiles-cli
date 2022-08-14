@@ -4,10 +4,13 @@
 # Description  Customize macOS settings preferences
 # Author       Zachi Nachshon <zachi.nachshon@gmail.com>
 #==============================================================================
+MAC_CURRENT_FOLDER_ABS_PATH=$(dirname "${BASH_SOURCE[0]}")
+MAC_OS_FOLDER_ABS_PATH=$(dirname "${MAC_CURRENT_FOLDER_ABS_PATH}")
+MAC_ROOT_FOLDER_ABS_PATH=$(dirname "${MAC_OS_FOLDER_ABS_PATH}")
 
-source "${DOTFILES_CLI_INSTALL_PATH}/external/shell_scripts_lib/logger.sh"
-source "${DOTFILES_CLI_INSTALL_PATH}/external/shell_scripts_lib/io.sh"
-source "${DOTFILES_CLI_INSTALL_PATH}/external/shell_scripts_lib/cmd.sh"
+source "${MAC_ROOT_FOLDER_ABS_PATH}/external/shell_scripts_lib/logger.sh"
+source "${MAC_ROOT_FOLDER_ABS_PATH}/external/shell_scripts_lib/io.sh"
+source "${MAC_ROOT_FOLDER_ABS_PATH}/external/shell_scripts_lib/cmd.sh"
 
 MAC_OS_SCRIPTS_FOLDER_PATH="${DOTFILES_REPO_LOCAL_PATH}/os/mac"
 

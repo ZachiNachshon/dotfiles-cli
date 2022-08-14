@@ -6,10 +6,13 @@
 # Description   Clone and link a dotfiles repository
 #               Path: ${HOME}/.config/dotfiles
 #==============================================================================
-source "${DOTFILES_CLI_INSTALL_PATH}/external/shell_scripts_lib/logger.sh"
-source "${DOTFILES_CLI_INSTALL_PATH}/external/shell_scripts_lib/prompter.sh"
-source "${DOTFILES_CLI_INSTALL_PATH}/external/shell_scripts_lib/cmd.sh"
-source "${DOTFILES_CLI_INSTALL_PATH}/external/shell_scripts_lib/io.sh"
+LINKER_CURRENT_FOLDER_ABS_PATH=$(dirname "${BASH_SOURCE[0]}")
+LINKER_ROOT_FOLDER_ABS_PATH=$(dirname "${LINKER_CURRENT_FOLDER_ABS_PATH}")
+
+source "${LINKER_ROOT_FOLDER_ABS_PATH}/external/shell_scripts_lib/logger.sh"
+source "${LINKER_ROOT_FOLDER_ABS_PATH}/external/shell_scripts_lib/prompter.sh"
+source "${LINKER_ROOT_FOLDER_ABS_PATH}/external/shell_scripts_lib/cmd.sh"
+source "${LINKER_ROOT_FOLDER_ABS_PATH}/external/shell_scripts_lib/io.sh"
 
 linker_print_banner() {
   echo -e "
