@@ -54,7 +54,7 @@ Example:
 curl -sfLS \
   https://raw.githubusercontent.com/ZachiNachshon/dotfiles-cli/master/install.sh | \
   DRY_RUN=True \
-  VERSION=0.4.0 \
+  VERSION=0.5.0 \
   bash -
 ```
 
