@@ -5,18 +5,19 @@
 # Supported OS  Linux & macOS
 # Description   Run dotfiles tests suite
 #==============================================================================
+DOTFILES_TEST_CURRENT_FOLDER_ABS_PATH=$(dirname "${BASH_SOURCE[0]}")
 
 # TODO: Need to run in a container with bash installed
 
+source "${DOTFILES_TEST_CURRENT_FOLDER_ABS_PATH}/external/shell_scripts_lib/logger.sh"
+source "${DOTFILES_TEST_CURRENT_FOLDER_ABS_PATH}/external/shell_scripts_lib/shell.sh"
+source "${DOTFILES_TEST_CURRENT_FOLDER_ABS_PATH}/external/shell_scripts_lib/test_lib/init.sh"
+source "${DOTFILES_TEST_CURRENT_FOLDER_ABS_PATH}/external/shell_scripts_lib/test_lib/assert.sh"
+source "${DOTFILES_TEST_CURRENT_FOLDER_ABS_PATH}/external/shell_scripts_lib/test_lib/assert.sh"
+source "${DOTFILES_TEST_CURRENT_FOLDER_ABS_PATH}/external/shell_scripts_lib/test_lib/test_logs.sh"
+
 TEST_DATA_DOTFILES_REPO_PATH="${PWD}/test_data/dotfiles_repo"
 TEST_DATA_DOTFILES_CLI_REPO_PATH="${PWD}"
-
-source "external/shell_scripts_lib/logger.sh"
-source "external/shell_scripts_lib/shell.sh"
-source "external/shell_scripts_lib/test_lib/init.sh"
-source "external/shell_scripts_lib/test_lib/assert.sh"
-source "external/shell_scripts_lib/test_lib/assert.sh"
-source "external/shell_scripts_lib/test_lib/test_logs.sh"
 
 set_test_repository_paths() {
   export DOTFILES_REPO_LOCAL_PATH="${TEST_DATA_DOTFILES_REPO_PATH}"

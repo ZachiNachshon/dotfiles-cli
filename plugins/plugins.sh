@@ -4,10 +4,12 @@
 # Description  Install shell plugins (bash/zsh)
 # Author       Zachi Nachshon <zachi.nachshon@gmail.com>
 #==============================================================================
+PLUGINS_CURRENT_FOLDER_ABS_PATH=$(dirname "${BASH_SOURCE[0]}")
+PLUGINS_ROOT_FOLDER_ABS_PATH=$(dirname "${PLUGINS_CURRENT_FOLDER_ABS_PATH}")
 
-source "${DOTFILES_CLI_INSTALL_PATH}/external/shell_scripts_lib/logger.sh"
-source "${DOTFILES_CLI_INSTALL_PATH}/external/shell_scripts_lib/io.sh"
-source "${DOTFILES_CLI_INSTALL_PATH}/external/shell_scripts_lib/cmd.sh"
+source "${PLUGINS_ROOT_FOLDER_ABS_PATH}/external/shell_scripts_lib/logger.sh"
+source "${PLUGINS_ROOT_FOLDER_ABS_PATH}/external/shell_scripts_lib/io.sh"
+source "${PLUGINS_ROOT_FOLDER_ABS_PATH}/external/shell_scripts_lib/cmd.sh"
 
 PLUGINS_SCRIPTS_ROOT_FOLDER_PATH="${DOTFILES_REPO_LOCAL_PATH}/plugins"
 

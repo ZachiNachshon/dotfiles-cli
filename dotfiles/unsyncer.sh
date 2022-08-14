@@ -6,11 +6,14 @@
 # Description   Clean environment and remove any dotfiles symlinks
 #               (options: home/shell/all)
 #==============================================================================
-source "${DOTFILES_CLI_INSTALL_PATH}/external/shell_scripts_lib/logger.sh"
-source "${DOTFILES_CLI_INSTALL_PATH}/external/shell_scripts_lib/prompter.sh"
-source "${DOTFILES_CLI_INSTALL_PATH}/external/shell_scripts_lib/io.sh"
-source "${DOTFILES_CLI_INSTALL_PATH}/external/shell_scripts_lib/strings.sh"
-source "${DOTFILES_CLI_INSTALL_PATH}/external/shell_scripts_lib/shell.sh"
+UNSYNCER_CURRENT_FOLDER_ABS_PATH=$(dirname "${BASH_SOURCE[0]}")
+UNSYNCER_ROOT_FOLDER_ABS_PATH=$(dirname "${UNSYNCER_CURRENT_FOLDER_ABS_PATH}")
+
+source "${UNSYNCER_ROOT_FOLDER_ABS_PATH}/external/shell_scripts_lib/logger.sh"
+source "${UNSYNCER_ROOT_FOLDER_ABS_PATH}/external/shell_scripts_lib/prompter.sh"
+source "${UNSYNCER_ROOT_FOLDER_ABS_PATH}/external/shell_scripts_lib/io.sh"
+source "${UNSYNCER_ROOT_FOLDER_ABS_PATH}/external/shell_scripts_lib/strings.sh"
+source "${UNSYNCER_ROOT_FOLDER_ABS_PATH}/external/shell_scripts_lib/shell.sh"
 
 DOTFILES_REPO_SYNCER_HOME_PATH="${DOTFILES_REPO_LOCAL_PATH}/dotfiles/home"
 DOTFILES_REPO_SYNCER_SHELL_PATH="${DOTFILES_REPO_LOCAL_PATH}/dotfiles/shell"
