@@ -6,7 +6,27 @@
 # Description   Load plugins and scripts in a centralized place instead of
 #               having scattered load commands on shell-rc file(s).
 #==============================================================================
-DOTFILES_CURRENT_FOLDER_ABS_PATH=$(dirname "${BASH_SOURCE[0]}")
+CONFIG_FOLDER_PATH="${HOME}/.config"
+DOTFILES_CLI_INSTALL_PATH=${DOTFILES_CLI_INSTALL_PATH:-"${CONFIG_FOLDER_PATH}/dotfiles-cli"}
+DOTFILES_REPO_LOCAL_PATH=${DOTFILES_REPO_LOCAL_PATH:-"${CONFIG_FOLDER_PATH}/dotfiles"}
+
+DOTFILES_CURRENT_FOLDER_ABS_PATH=$(dirname "$(readlink "${BASH_SOURCE[0]}")")
+
+# Path resolution to support Homebrew installation.
+# Homebrew is using multiple symlinks chains:
+# /usr/local/bin/dotfiles
+#   ../Cellar/dotfiles-cli/0.x.0/bin/dotfiles
+#     ../Cellar/dotfiles-cli/0.x.0/bin
+#       /usr/local/Cellar/dotfiles-cli/0.x.0/libexec
+if [[ -n "${DOTFILES_CURRENT_FOLDER_ABS_PATH}" ]]; then
+  if [[ "${DOTFILES_CURRENT_FOLDER_ABS_PATH}" == *Cellar* ]]; then
+    if [[ "${DOTFILES_CURRENT_FOLDER_ABS_PATH}" == *bin ]]; then
+      DOTFILES_CURRENT_FOLDER_ABS_PATH="${DOTFILES_CURRENT_FOLDER_ABS_PATH/bin/libexec}"
+    fi
+    DOTFILES_CURRENT_FOLDER_ABS_PATH="${DOTFILES_CURRENT_FOLDER_ABS_PATH/..\/Cellar//usr/local/Cellar}"
+    DOTFILES_CLI_INSTALL_PATH="${DOTFILES_CURRENT_FOLDER_ABS_PATH}"
+  fi
+fi
 
 source "${DOTFILES_CURRENT_FOLDER_ABS_PATH}/brew/brew.sh"
 source "${DOTFILES_CURRENT_FOLDER_ABS_PATH}/linker/linker.sh"
@@ -20,10 +40,6 @@ source "${DOTFILES_CURRENT_FOLDER_ABS_PATH}/external/shell_scripts_lib/git.sh"
 source "${DOTFILES_CURRENT_FOLDER_ABS_PATH}/external/shell_scripts_lib/io.sh"
 source "${DOTFILES_CURRENT_FOLDER_ABS_PATH}/external/shell_scripts_lib/shell.sh"
 source "${DOTFILES_CURRENT_FOLDER_ABS_PATH}/external/shell_scripts_lib/os.sh"
-
-CONFIG_FOLDER_PATH="${HOME}/.config"
-DOTFILES_CLI_INSTALL_PATH=${DOTFILES_CLI_INSTALL_PATH:-"${CONFIG_FOLDER_PATH}/dotfiles-cli"}
-DOTFILES_REPO_LOCAL_PATH=${DOTFILES_REPO_LOCAL_PATH:-"${CONFIG_FOLDER_PATH}/dotfiles"}
 
 SCRIPT_MENU_TITLE="Dotfiles"
 
@@ -345,9 +361,11 @@ reload_active_shell_session_and_exit() {
     fi
 
     if ! is_dry_run; then
-      (export DOTFILES_CLI_SILENT_OPTION=${reload_session_silent_option} && exec ${shell_in_use})
+      (export DOTFILES_CLI_SILENT_OPTION=${reload_session_silent_option} && \
+      export DOTFILES_CLI_INSTALL_PATH=${DOTFILES_CLI_INSTALL_PATH} &&  exec ${shell_in_use})
     else
-      log_info "(export DOTFILES_CLI_SILENT_OPTION=${reload_session_silent_option} && exec ${shell_in_use})"
+      log_info "(export DOTFILES_CLI_SILENT_OPTION=${reload_session_silent_option} && \
+export DOTFILES_CLI_INSTALL_PATH=${DOTFILES_CLI_INSTALL_PATH} && exec ${shell_in_use})"
     fi
   fi
   exit 0
