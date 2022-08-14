@@ -5,7 +5,9 @@ PROJECT_LOCATION=.
 .PHONY: create_tarball
 create_tarball: ## Create a tarball from local repository
 	@tar \
-	--exclude='.git' \
+	--exclude='./.git' \
+	--exclude='./.github' \
+	--exclude='test_data/' \
 	--exclude='docs-site/' \
 	--exclude='formula.rb' \
 	--exclude='dotfiles-cli.tar.gz' \

@@ -466,7 +466,8 @@ test_reload_shell_session() {
   before_test "test_reload_shell_session"
 
   # Given I prepare the expected reload output
-  local reload_output="(export DOTFILES_CLI_SILENT_OPTION=False && exec $SHELL)"
+  local reload_output="(export DOTFILES_CLI_SILENT_OPTION=False && \
+export DOTFILES_CLI_INSTALL_PATH=${DOTFILES_CLI_INSTALL_PATH} && exec $SHELL)"
 
   # And I run a reload command
   ./dotfiles.sh reload --dry-run -y -v >&"${TEST_log}" ||
