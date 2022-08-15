@@ -83,6 +83,15 @@ SHELL_RC_FILE_HEADER="""\\
 # The following script will source a reload_session.sh script under \\
 # current shell session without creating a nested shell session. \\
 ############################################################################# \\
+dotfiles_cli_install_path=\$(command -v dotfiles) \\
+# Path resolution to support Homebrew installation \\
+if [[ \${dotfiles_cli_install_path} == /usr/local/bin/dotfiles ]]; then \\
+  homebrew_dotfiles_cli_install_path=\$(dirname \$(readlink \${dotfiles_cli_install_path})) \\
+  homebrew_dotfiles_cli_install_path=\${homebrew_dotfiles_cli_install_path/bin/libexec} \\
+  homebrew_dotfiles_cli_install_path=\${homebrew_dotfiles_cli_install_path/..\\\\/Cellar//usr/local/Cellar} \\
+  DOTFILES_CLI_INSTALL_PATH=\${homebrew_dotfiles_cli_install_path} \\
+fi \\
+ \\
 DOTFILES_CLI_INSTALL_PATH=\${DOTFILES_CLI_INSTALL_PATH:-\${HOME}/.config/dotfiles-cli} \\
 DOTFILES_CLI_RELOAD_SESSION_SCRIPT_PATH=\${DOTFILES_CLI_INSTALL_PATH}/reload_session.sh \\
  \\
