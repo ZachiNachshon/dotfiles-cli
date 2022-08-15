@@ -357,6 +357,15 @@
 <span class="c1"># The following script will source a reload_session.sh script under </span>
 <span class="c1"># current shell session without creating a nested shell session. </span>
 <span class="c1">############################################################################# </span>
+<span class="nv">dotfiles_cli_install_path</span><span class="o">=</span><span class="k">$(</span><span class="nb">command</span> -v dotfiles<span class="k">)</span> 
+<span class="c1"># Path resolution to support Homebrew installation </span>
+<span class="k">if</span> <span class="o">[[</span> <span class="si">${</span><span class="nv">dotfiles_cli_install_path</span><span class="si">}</span> <span class="o">==</span> /usr/local/bin/dotfiles <span class="o">]]</span><span class="p">;</span> <span class="k">then</span> 
+  <span class="nv">homebrew_dotfiles_cli_install_path</span><span class="o">=</span><span class="k">$(</span>dirname <span class="k">$(</span>readlink <span class="si">${</span><span class="nv">dotfiles_cli_install_path</span><span class="si">}</span><span class="k">))</span> 
+  <span class="nv">homebrew_dotfiles_cli_install_path</span><span class="o">=</span><span class="si">${</span><span class="nv">homebrew_dotfiles_cli_install_path</span><span class="p">/bin/libexec</span><span class="si">}</span> 
+  <span class="nv">homebrew_dotfiles_cli_install_path</span><span class="o">=</span><span class="si">${</span><span class="nv">homebrew_dotfiles_cli_install_path</span><span class="p">/..</span><span class="se">\/</span><span class="nv">Cellar</span><span class="p">//usr/local/Cellar</span><span class="si">}</span> 
+  <span class="nv">DOTFILES_CLI_INSTALL_PATH</span><span class="o">=</span><span class="si">${</span><span class="nv">homebrew_dotfiles_cli_install_path</span><span class="si">}</span> 
+<span class="k">fi</span> 
+ 
 <span class="nv">DOTFILES_CLI_INSTALL_PATH</span><span class="o">=</span><span class="si">${</span><span class="nv">DOTFILES_CLI_INSTALL_PATH</span><span class="k">:-</span><span class="si">${</span><span class="nv">HOME</span><span class="si">}</span><span class="p">/.config/dotfiles-cli</span><span class="si">}</span> 
 <span class="nv">DOTFILES_CLI_RELOAD_SESSION_SCRIPT_PATH</span><span class="o">=</span><span class="si">${</span><span class="nv">DOTFILES_CLI_INSTALL_PATH</span><span class="si">}</span>/reload_session.sh 
  
@@ -365,7 +374,7 @@
   <span class="nb">source</span> <span class="si">${</span><span class="nv">DOTFILES_CLI_RELOAD_SESSION_SCRIPT_PATH</span><span class="si">}</span> 
 <span class="k">else</span> 
   <span class="nb">echo</span> -e <span class="s1">&#39;Dotfiles CLI is not installed, cannot load plugins/reload session. path: $DOTFILES_CLI_INSTALL_PATH&#39;</span> 
-<span class="k">fi</span> 
+<span class="k">fi</span>
 </code></pre></div><div class="bd-callout bd-callout-info">
 Do not change the header location on the RC file since other session related content (<code>exports</code> / <code>aliases</code>) might rely on the reloaded sources.
 </div>
