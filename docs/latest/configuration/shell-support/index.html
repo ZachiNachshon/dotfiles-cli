@@ -357,23 +357,39 @@
 <span class="c1"># The following script will source a reload_session.sh script under </span>
 <span class="c1"># current shell session without creating a nested shell session. </span>
 <span class="c1">############################################################################# </span>
-<span class="nv">dotfiles_cli_install_path</span><span class="o">=</span><span class="k">$(</span><span class="nb">command</span> -v dotfiles<span class="k">)</span> 
-<span class="c1"># Path resolution to support Homebrew installation </span>
-<span class="k">if</span> <span class="o">[[</span> <span class="si">${</span><span class="nv">dotfiles_cli_install_path</span><span class="si">}</span> <span class="o">==</span> /usr/local/bin/dotfiles <span class="o">]]</span><span class="p">;</span> <span class="k">then</span> 
-  <span class="nv">homebrew_dotfiles_cli_install_path</span><span class="o">=</span><span class="k">$(</span>dirname <span class="k">$(</span>readlink <span class="si">${</span><span class="nv">dotfiles_cli_install_path</span><span class="si">}</span><span class="k">))</span> 
-  <span class="nv">homebrew_dotfiles_cli_install_path</span><span class="o">=</span><span class="si">${</span><span class="nv">homebrew_dotfiles_cli_install_path</span><span class="p">/bin/libexec</span><span class="si">}</span> 
-  <span class="nv">homebrew_dotfiles_cli_install_path</span><span class="o">=</span><span class="si">${</span><span class="nv">homebrew_dotfiles_cli_install_path</span><span class="p">/..</span><span class="se">\/</span><span class="nv">Cellar</span><span class="p">//usr/local/Cellar</span><span class="si">}</span> 
-  <span class="nv">DOTFILES_CLI_INSTALL_PATH</span><span class="o">=</span><span class="si">${</span><span class="nv">homebrew_dotfiles_cli_install_path</span><span class="si">}</span> 
-<span class="k">fi</span> 
- 
-<span class="nv">DOTFILES_CLI_INSTALL_PATH</span><span class="o">=</span><span class="si">${</span><span class="nv">DOTFILES_CLI_INSTALL_PATH</span><span class="k">:-</span><span class="si">${</span><span class="nv">HOME</span><span class="si">}</span><span class="p">/.config/dotfiles-cli</span><span class="si">}</span> 
-<span class="nv">DOTFILES_CLI_RELOAD_SESSION_SCRIPT_PATH</span><span class="o">=</span><span class="si">${</span><span class="nv">DOTFILES_CLI_INSTALL_PATH</span><span class="si">}</span>/reload_session.sh 
- 
-<span class="k">if</span> <span class="o">[[</span> -e <span class="si">${</span><span class="nv">DOTFILES_CLI_RELOAD_SESSION_SCRIPT_PATH</span><span class="si">}</span> <span class="o">]]</span><span class="p">;</span> <span class="k">then</span> 
-  <span class="nb">export</span> <span class="nv">LOGGER_SILENT</span><span class="o">=</span>True 
-  <span class="nb">source</span> <span class="si">${</span><span class="nv">DOTFILES_CLI_RELOAD_SESSION_SCRIPT_PATH</span><span class="si">}</span> 
-<span class="k">else</span> 
-  <span class="nb">echo</span> -e <span class="s1">&#39;Dotfiles CLI is not installed, cannot load plugins/reload session. path: $DOTFILES_CLI_INSTALL_PATH&#39;</span> 
+
+<span class="c1"># Homebrew use different folder paths for Intel/ARM architecture:</span>
+<span class="c1"># Intel - /usr/local</span>
+<span class="c1"># ARM   - /opt/homebrew</span>
+<span class="nv">HOMEBREW_PREFIX_PATH</span><span class="o">=</span><span class="s2">&#34;&#34;</span>
+<span class="nv">ARCH</span><span class="o">=</span><span class="k">$(</span>uname -m <span class="p">|</span> tr <span class="s1">&#39;[:upper:]&#39;</span> <span class="s1">&#39;[:lower:]&#39;</span><span class="k">)</span>
+<span class="k">if</span> <span class="o">[[</span> <span class="si">${</span><span class="nv">ARCH</span><span class="si">}</span> <span class="o">==</span> *x86_64* <span class="o">]]</span><span class="p">;</span> <span class="k">then</span>
+  <span class="nv">HOMEBREW_PREFIX_PATH</span><span class="o">=</span><span class="s2">&#34;/usr/local&#34;</span>
+<span class="k">elif</span> <span class="o">[[</span> <span class="si">${</span><span class="nv">ARCH</span><span class="si">}</span> <span class="o">==</span> *arm* <span class="o">]]</span><span class="p">;</span> <span class="k">then</span>
+  <span class="nv">HOMEBREW_PREFIX_PATH</span><span class="o">=</span><span class="s2">&#34;/opt/homebrew&#34;</span>
+<span class="k">else</span>
+  <span class="nb">echo</span> <span class="s2">&#34;Architecture is not supported by dotfiles-cli. name: </span><span class="si">${</span><span class="nv">ARCH</span><span class="si">}</span><span class="s2">&#34;</span>
+<span class="k">fi</span>
+
+<span class="k">if</span> <span class="o">[[</span> -n <span class="si">${</span><span class="nv">HOMEBREW_PREFIX_PATH</span><span class="si">}</span> <span class="o">]]</span><span class="p">;</span> <span class="k">then</span> 
+  <span class="nv">dotfiles_cli_install_path</span><span class="o">=</span><span class="k">$(</span><span class="nb">command</span> -v dotfiles<span class="k">)</span> 
+  <span class="c1"># Path resolution to support Homebrew installation </span>
+  <span class="k">if</span> <span class="o">[[</span> <span class="si">${</span><span class="nv">dotfiles_cli_install_path</span><span class="si">}</span> <span class="o">==</span> <span class="si">${</span><span class="nv">HOMEBREW_PREFIX_PATH</span><span class="si">}</span>/bin/dotfiles <span class="o">]]</span><span class="p">;</span> <span class="k">then</span> 
+    <span class="nv">homebrew_dotfiles_cli_install_path</span><span class="o">=</span><span class="k">$(</span>dirname <span class="k">$(</span>readlink <span class="si">${</span><span class="nv">dotfiles_cli_install_path</span><span class="si">}</span><span class="k">))</span> 
+    <span class="nv">homebrew_dotfiles_cli_install_path</span><span class="o">=</span><span class="si">${</span><span class="nv">homebrew_dotfiles_cli_install_path</span><span class="p">/bin/libexec</span><span class="si">}</span> 
+    <span class="nv">homebrew_dotfiles_cli_install_path</span><span class="o">=</span><span class="si">${</span><span class="nv">homebrew_dotfiles_cli_install_path</span><span class="p">/..</span><span class="se">\/</span><span class="nv">Cellar</span><span class="p">/</span><span class="si">${</span><span class="nv">HOMEBREW_PREFIX_PATH</span><span class="si">}</span><span class="p">/Cellar</span><span class="si">}</span> 
+    <span class="nv">DOTFILES_CLI_INSTALL_PATH</span><span class="o">=</span><span class="si">${</span><span class="nv">homebrew_dotfiles_cli_install_path</span><span class="si">}</span> 
+  <span class="k">fi</span> 
+  
+  <span class="nv">DOTFILES_CLI_INSTALL_PATH</span><span class="o">=</span><span class="si">${</span><span class="nv">DOTFILES_CLI_INSTALL_PATH</span><span class="k">:-</span><span class="si">${</span><span class="nv">HOME</span><span class="si">}</span><span class="p">/.config/dotfiles-cli</span><span class="si">}</span> 
+  <span class="nv">DOTFILES_CLI_RELOAD_SESSION_SCRIPT_PATH</span><span class="o">=</span><span class="si">${</span><span class="nv">DOTFILES_CLI_INSTALL_PATH</span><span class="si">}</span>/reload_session.sh 
+  
+  <span class="k">if</span> <span class="o">[[</span> -e <span class="si">${</span><span class="nv">DOTFILES_CLI_RELOAD_SESSION_SCRIPT_PATH</span><span class="si">}</span> <span class="o">]]</span><span class="p">;</span> <span class="k">then</span> 
+    <span class="nb">export</span> <span class="nv">LOGGER_SILENT</span><span class="o">=</span>True 
+    <span class="nb">source</span> <span class="si">${</span><span class="nv">DOTFILES_CLI_RELOAD_SESSION_SCRIPT_PATH</span><span class="si">}</span> 
+  <span class="k">else</span> 
+    <span class="nb">echo</span> -e <span class="s1">&#39;Dotfiles CLI is not installed, cannot load plugins/reload session. path: ${DOTFILES_CLI_INSTALL_PATH}&#39;</span> 
+  <span class="k">fi</span>
 <span class="k">fi</span>
 </code></pre></div><div class="bd-callout bd-callout-info">
 Do not change the header location on the RC file since other session related content (<code>exports</code> / <code>aliases</code>) might rely on the reloaded sources.
