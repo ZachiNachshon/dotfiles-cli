@@ -33,7 +33,7 @@ brew_print_banner() {
 
 brew_verify_and_install_homebrew() {
   log_info "Verifying Homebrew installation..."
-  if ! is_directory_exist "/usr/local/Homebrew"; then
+  if ! is_directory_exist "${HOMEBREW_PREFIX_PATH}/Homebrew"; then
     log_warning "Homebrew is not installed, installing..."
     cmd_run "/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)""
   else

@@ -10,20 +10,34 @@ CONFIG_FOLDER_PATH="${HOME}/.config"
 DOTFILES_CLI_INSTALL_PATH=${DOTFILES_CLI_INSTALL_PATH:-"${CONFIG_FOLDER_PATH}/dotfiles-cli"}
 DOTFILES_REPO_LOCAL_PATH=${DOTFILES_REPO_LOCAL_PATH:-"${CONFIG_FOLDER_PATH}/dotfiles"}
 
+# Homebrew use different folder paths for Intel/ARM architecture:
+# Intel - /usr/local
+# ARM   - /opt/homebrew
+HOMEBREW_PREFIX_PATH=""
+ARCH=$(uname -m | tr '[:upper:]' '[:lower:]')
+if [[ ${ARCH} == *x86_64* ]]; then
+  HOMEBREW_PREFIX_PATH="/usr/local"
+elif [[ ${ARCH} == *arm* ]]; then
+  HOMEBREW_PREFIX_PATH="/opt/homebrew"
+else
+  echo "Architecture is not supported by dotfiles-cli. name: ${ARCH}"
+  exit 1
+fi
+
 DOTFILES_CURRENT_FOLDER_ABS_PATH=$(dirname "$(readlink "${BASH_SOURCE[0]}")")
 
 # Path resolution to support Homebrew installation.
 # Homebrew is using multiple symlinks chains:
-# /usr/local/bin/dotfiles
+# /usr/local/bin/dotfiles OR /opt/homebrew/bin/dotfiles
 #   ../Cellar/dotfiles-cli/0.x.0/bin/dotfiles
 #     ../Cellar/dotfiles-cli/0.x.0/bin
-#       /usr/local/Cellar/dotfiles-cli/0.x.0/libexec
+#       /usr/local/Cellar/dotfiles-cli/0.x.0/libexec OR /opt/homebrew/Cellar/dotfiles-cli/0.x.0/libexec
 if [[ -n "${DOTFILES_CURRENT_FOLDER_ABS_PATH}" ]]; then
   if [[ "${DOTFILES_CURRENT_FOLDER_ABS_PATH}" == *Cellar* ]]; then
     if [[ "${DOTFILES_CURRENT_FOLDER_ABS_PATH}" == *bin ]]; then
       DOTFILES_CURRENT_FOLDER_ABS_PATH="${DOTFILES_CURRENT_FOLDER_ABS_PATH/bin/libexec}"
     fi
-    DOTFILES_CURRENT_FOLDER_ABS_PATH="${DOTFILES_CURRENT_FOLDER_ABS_PATH/..\/Cellar//usr/local/Cellar}"
+    DOTFILES_CURRENT_FOLDER_ABS_PATH="${DOTFILES_CURRENT_FOLDER_ABS_PATH/..\/Cellar//${HOMEBREW_PREFIX_PATH}/Cellar}"
     DOTFILES_CLI_INSTALL_PATH="${DOTFILES_CURRENT_FOLDER_ABS_PATH}"
   fi
 fi
@@ -83,23 +97,39 @@ SHELL_RC_FILE_HEADER="""\\
 # The following script will source a reload_session.sh script under \\
 # current shell session without creating a nested shell session. \\
 ############################################################################# \\
-dotfiles_cli_install_path=\$(command -v dotfiles) \\
-# Path resolution to support Homebrew installation \\
-if [[ \${dotfiles_cli_install_path} == /usr/local/bin/dotfiles ]]; then \\
-  homebrew_dotfiles_cli_install_path=\$(dirname \$(readlink \${dotfiles_cli_install_path})) \\
-  homebrew_dotfiles_cli_install_path=\${homebrew_dotfiles_cli_install_path/bin/libexec} \\
-  homebrew_dotfiles_cli_install_path=\${homebrew_dotfiles_cli_install_path/..\\\\/Cellar//usr/local/Cellar} \\
-  DOTFILES_CLI_INSTALL_PATH=\${homebrew_dotfiles_cli_install_path} \\
+ \\
+# Homebrew use different folder paths for Intel/ARM architecture: \\
+# Intel - /usr/local \\
+# ARM   - /opt/homebrew \\
+HOMEBREW_PREFIX_PATH='\'\'' \\
+ARCH=\$(uname -m | tr '\''[:upper:]'\'' '\''[:lower:]'\'') \\
+if [[ \${ARCH} == *x86_64* ]]; then \\
+  HOMEBREW_PREFIX_PATH=/usr/local \\
+elif [[ \${ARCH} == *arm* ]]; then \\
+  HOMEBREW_PREFIX_PATH=/opt/homebrew \\
+else \\
+  echo -e '\''Architecture is not supported by dotfiles-cli. name: $ARCH'\'' \\
 fi \\
  \\
-DOTFILES_CLI_INSTALL_PATH=\${DOTFILES_CLI_INSTALL_PATH:-\${HOME}/.config/dotfiles-cli} \\
-DOTFILES_CLI_RELOAD_SESSION_SCRIPT_PATH=\${DOTFILES_CLI_INSTALL_PATH}/reload_session.sh \\
- \\
-if [[ -e \${DOTFILES_CLI_RELOAD_SESSION_SCRIPT_PATH} ]]; then \\
-  export LOGGER_SILENT=True \\
-  source \${DOTFILES_CLI_RELOAD_SESSION_SCRIPT_PATH} \\
-else \\
-  echo -e '\''Dotfiles CLI is not installed, cannot load plugins/reload session. path: \$DOTFILES_CLI_INSTALL_PATH'\'' \\
+if [[ -n \${HOMEBREW_PREFIX_PATH} ]]; then \\
+  dotfiles_cli_install_path=\$(command -v dotfiles) \\
+  # Path resolution to support Homebrew installation \\
+  if [[ \${dotfiles_cli_install_path} == \${HOMEBREW_PREFIX_PATH}/bin/dotfiles ]]; then \\
+    homebrew_dotfiles_cli_install_path=\$(dirname \$(readlink \${dotfiles_cli_install_path})) \\
+    homebrew_dotfiles_cli_install_path=\${homebrew_dotfiles_cli_install_path/bin/libexec} \\
+    homebrew_dotfiles_cli_install_path=\${homebrew_dotfiles_cli_install_path/..\\\\/Cellar//\${HOMEBREW_PREFIX_PATH}/Cellar} \\
+    DOTFILES_CLI_INSTALL_PATH=\${homebrew_dotfiles_cli_install_path} \\
+  fi \\
+  \\
+  DOTFILES_CLI_INSTALL_PATH=\${DOTFILES_CLI_INSTALL_PATH:-\${HOME}/.config/dotfiles-cli} \\
+  DOTFILES_CLI_RELOAD_SESSION_SCRIPT_PATH=\${DOTFILES_CLI_INSTALL_PATH}/reload_session.sh \\
+  \\
+  if [[ -e \${DOTFILES_CLI_RELOAD_SESSION_SCRIPT_PATH} ]]; then \\
+    export LOGGER_SILENT=True \\
+    source \${DOTFILES_CLI_RELOAD_SESSION_SCRIPT_PATH} \\
+  else \\
+    echo -e '\''Dotfiles CLI is not installed, cannot load plugins/reload session. path: $DOTFILES_CLI_INSTALL_PATH'\'' \\
+  fi \\
 fi \\
 """
 
@@ -261,11 +291,11 @@ ${COLOR_WHITE}LOCATIONS${COLOR_NONE}:
 
 ${COLOR_WHITE}HOMEBREW PATHS${COLOR_NONE}:
 
-  ${COLOR_LIGHT_CYAN}Brew Repository${COLOR_NONE}...: /usr/local/Homebrew
-  ${COLOR_LIGHT_CYAN}Brew Symlinks${COLOR_NONE}.....: /usr/local/opt
-  ${COLOR_LIGHT_CYAN}Brew Packages${COLOR_NONE}.....: /usr/local/Cellar
-  ${COLOR_LIGHT_CYAN}Brew Casks${COLOR_NONE}........: /usr/local/Caskroom
-  ${COLOR_LIGHT_CYAN}Brew Taps${COLOR_NONE}.........: /usr/local/Homebrew/Library/Taps/
+  ${COLOR_LIGHT_CYAN}Brew Repository${COLOR_NONE}...: ${HOMEBREW_PREFIX_PATH}/Homebrew
+  ${COLOR_LIGHT_CYAN}Brew Symlinks${COLOR_NONE}.....: ${HOMEBREW_PREFIX_PATH}/opt
+  ${COLOR_LIGHT_CYAN}Brew Packages${COLOR_NONE}.....: ${HOMEBREW_PREFIX_PATH}/Cellar
+  ${COLOR_LIGHT_CYAN}Brew Casks${COLOR_NONE}........: ${HOMEBREW_PREFIX_PATH}/Caskroom
+  ${COLOR_LIGHT_CYAN}Brew Taps${COLOR_NONE}.........: ${HOMEBREW_PREFIX_PATH}/Homebrew/Library/Taps/
 
   ${COLOR_LIGHT_CYAN}Dotfiles Brew Packages${COLOR_NONE}...: ${DOTFILES_REPO_LOCAL_PATH}/brew/packages.txt
   ${COLOR_LIGHT_CYAN}Dotfiles Brew Casks${COLOR_NONE}......: ${DOTFILES_REPO_LOCAL_PATH}/brew/casks.txt
@@ -370,8 +400,8 @@ reload_active_shell_session_and_exit() {
     fi
 
     if ! is_dry_run; then
-      (export DOTFILES_CLI_SILENT_OPTION=${reload_session_silent_option} && \
-      export DOTFILES_CLI_INSTALL_PATH=${DOTFILES_CLI_INSTALL_PATH} &&  exec ${shell_in_use})
+      (export DOTFILES_CLI_SILENT_OPTION=${reload_session_silent_option} &&
+        export DOTFILES_CLI_INSTALL_PATH=${DOTFILES_CLI_INSTALL_PATH} && exec ${shell_in_use})
     else
       log_info "(export DOTFILES_CLI_SILENT_OPTION=${reload_session_silent_option} && \
 export DOTFILES_CLI_INSTALL_PATH=${DOTFILES_CLI_INSTALL_PATH} && exec ${shell_in_use})"

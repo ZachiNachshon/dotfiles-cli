@@ -36,23 +36,39 @@ Since it is not possible to tamper with parent shell process environment from a 
 # The following script will source a reload_session.sh script under 
 # current shell session without creating a nested shell session. 
 ############################################################################# 
-dotfiles_cli_install_path=$(command -v dotfiles) 
-# Path resolution to support Homebrew installation 
-if [[ ${dotfiles_cli_install_path} == /usr/local/bin/dotfiles ]]; then 
-  homebrew_dotfiles_cli_install_path=$(dirname $(readlink ${dotfiles_cli_install_path})) 
-  homebrew_dotfiles_cli_install_path=${homebrew_dotfiles_cli_install_path/bin/libexec} 
-  homebrew_dotfiles_cli_install_path=${homebrew_dotfiles_cli_install_path/..\/Cellar//usr/local/Cellar} 
-  DOTFILES_CLI_INSTALL_PATH=${homebrew_dotfiles_cli_install_path} 
-fi 
- 
-DOTFILES_CLI_INSTALL_PATH=${DOTFILES_CLI_INSTALL_PATH:-${HOME}/.config/dotfiles-cli} 
-DOTFILES_CLI_RELOAD_SESSION_SCRIPT_PATH=${DOTFILES_CLI_INSTALL_PATH}/reload_session.sh 
- 
-if [[ -e ${DOTFILES_CLI_RELOAD_SESSION_SCRIPT_PATH} ]]; then 
-  export LOGGER_SILENT=True 
-  source ${DOTFILES_CLI_RELOAD_SESSION_SCRIPT_PATH} 
-else 
-  echo -e 'Dotfiles CLI is not installed, cannot load plugins/reload session. path: $DOTFILES_CLI_INSTALL_PATH' 
+
+# Homebrew use different folder paths for Intel/ARM architecture:
+# Intel - /usr/local
+# ARM   - /opt/homebrew
+HOMEBREW_PREFIX_PATH=""
+ARCH=$(uname -m | tr '[:upper:]' '[:lower:]')
+if [[ ${ARCH} == *x86_64* ]]; then
+  HOMEBREW_PREFIX_PATH="/usr/local"
+elif [[ ${ARCH} == *arm* ]]; then
+  HOMEBREW_PREFIX_PATH="/opt/homebrew"
+else
+  echo "Architecture is not supported by dotfiles-cli. name: ${ARCH}"
+fi
+
+if [[ -n ${HOMEBREW_PREFIX_PATH} ]]; then 
+  dotfiles_cli_install_path=$(command -v dotfiles) 
+  # Path resolution to support Homebrew installation 
+  if [[ ${dotfiles_cli_install_path} == ${HOMEBREW_PREFIX_PATH}/bin/dotfiles ]]; then 
+    homebrew_dotfiles_cli_install_path=$(dirname $(readlink ${dotfiles_cli_install_path})) 
+    homebrew_dotfiles_cli_install_path=${homebrew_dotfiles_cli_install_path/bin/libexec} 
+    homebrew_dotfiles_cli_install_path=${homebrew_dotfiles_cli_install_path/..\/Cellar/${HOMEBREW_PREFIX_PATH}/Cellar} 
+    DOTFILES_CLI_INSTALL_PATH=${homebrew_dotfiles_cli_install_path} 
+  fi 
+  
+  DOTFILES_CLI_INSTALL_PATH=${DOTFILES_CLI_INSTALL_PATH:-${HOME}/.config/dotfiles-cli} 
+  DOTFILES_CLI_RELOAD_SESSION_SCRIPT_PATH=${DOTFILES_CLI_INSTALL_PATH}/reload_session.sh 
+  
+  if [[ -e ${DOTFILES_CLI_RELOAD_SESSION_SCRIPT_PATH} ]]; then 
+    export LOGGER_SILENT=True 
+    source ${DOTFILES_CLI_RELOAD_SESSION_SCRIPT_PATH} 
+  else 
+    echo -e 'Dotfiles CLI is not installed, cannot load plugins/reload session. path: ${DOTFILES_CLI_INSTALL_PATH}' 
+  fi
 fi
 ```
 
