@@ -34,11 +34,14 @@ brew_print_banner() {
 
 brew_verify_and_install_homebrew() {
   log_info "Verifying Homebrew installation..."
-  if check_tool "brew"; then
-    log_info "Homebrew is installed."
-  else
-    log_warning "Homebrew is not installed, installing..."
-    cmd_run "/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)""
+
+  if ! is_dry_run; then
+    if check_tool "brew"; then
+      log_info "Homebrew is installed."
+    else
+      log_warning "Homebrew is not installed, installing..."
+      cmd_run "/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)""
+    fi
   fi
 }
 
