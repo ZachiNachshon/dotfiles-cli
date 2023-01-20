@@ -54,7 +54,7 @@ params:
   social_logo_path:     /docs/latest/assets/brand/dotfiles-cli-social-logo.png
   google_analytics:     ""
 
-  current_version:      "0.7.0"
+  current_version:      "0.8.0"
   docs_version:         "latest"
   github_org:           "https://github.com/ZachiNachshon"
   repo:                 "https://github.com/ZachiNachshon/dotfiles-cli"
@@ -63,7 +63,7 @@ params:
   blog:                 "https://zachi-nachshon.medium.com/"
 
   download:
-    source:             "https://github.com/ZachiNachshon/dotfiles-cli/archive/v0.7.0.zip"
+    source:             "https://github.com/ZachiNachshon/dotfiles-cli/archive/v0.8.0.zip"
     dist:               "https://github.com/ZachiNachshon/dotfiles-cli/releases"
 
   sponsor:
