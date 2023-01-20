@@ -32,16 +32,10 @@ Recommended commands order for initial setup:
    dotfiles link https://github.com/ZachiNachshon/dotfiles-example.git
    ```
 
-1. Create home/shell symlinks to `$HOME` folder:
+1. Install Homebrew components (might take time):
 
    ```bash
-   dotfiles sync all
-   ```
-
-1. Install shell plugins:
-
-   ```bash
-   dotfiles plugins <bash/zsh>
+   dotfiles brew all
    ```
 
 1. Update OS settings and preferences:
@@ -50,8 +44,14 @@ Recommended commands order for initial setup:
    dotfiles os <mac/linux>
    ```
 
-1. Install Homebrew components (might take time):
+1. Install shell plugins:
 
    ```bash
-   dotfiles brew all
+   dotfiles plugins <bash/zsh>
+   ```
+
+1. Create home/shell symlinks to `$HOME` folder:
+
+   ```bash
+   dotfiles sync all
    ```

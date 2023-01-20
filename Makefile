@@ -12,7 +12,7 @@ create_tarball: ## Create a tarball from local repository
 	--exclude='formula.rb' \
 	--exclude='dotfiles-cli.tar.gz' \
 	-zcf dotfiles-cli.tar.gz \
-	.
+	. > /dev/null 2>&1
 
 .PHONY: install_from_respository
 install_from_respository: create_tarball ## Install a local dotfiles CLI from this repository
