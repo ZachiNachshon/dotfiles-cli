@@ -13,6 +13,7 @@ source "${BREW_ROOT_FOLDER_ABS_PATH}/external/shell_scripts_lib/cmd.sh"
 source "${BREW_ROOT_FOLDER_ABS_PATH}/external/shell_scripts_lib/prompter.sh"
 source "${BREW_ROOT_FOLDER_ABS_PATH}/external/shell_scripts_lib/io.sh"
 source "${BREW_ROOT_FOLDER_ABS_PATH}/external/shell_scripts_lib/strings.sh"
+source "${BREW_ROOT_FOLDER_ABS_PATH}/external/shell_scripts_lib/checks.sh"
 
 DOTFILES_REPO_BREW_PACKAGE_PATH="${DOTFILES_REPO_LOCAL_PATH}/brew/packages.txt"
 DOTFILES_REPO_BREW_CASKS_PATH="${DOTFILES_REPO_LOCAL_PATH}/brew/casks.txt"
@@ -33,11 +34,14 @@ brew_print_banner() {
 
 brew_verify_and_install_homebrew() {
   log_info "Verifying Homebrew installation..."
-  if ! is_directory_exist "${HOMEBREW_PREFIX_PATH}/Homebrew"; then
-    log_warning "Homebrew is not installed, installing..."
-    cmd_run "/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)""
-  else
-    log_info "Homebrew is installed."
+
+  if ! is_dry_run; then
+    if check_tool "brew"; then
+      log_info "Homebrew is installed."
+    else
+      log_warning "Homebrew is not installed, installing..."
+      cmd_run "/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)""
+    fi
   fi
 }
 
@@ -69,17 +73,14 @@ brew_update_outdated_plugins() {
 
 brew_install_packages() {
   log_info "Installing/Updating Homebrew packages..."
+  local pkgs_to_install=""
   while read pkg_line; do
     if is_comment "${pkg_line}"; then
       continue
     fi
-    echo -e "
-===================
-Installing Package: ${pkg_line}
-===================
-"
-    cmd_run "brew install ${pkg_line}"
+    pkgs_to_install+="${pkg_line} "
   done <"${DOTFILES_REPO_BREW_PACKAGE_PATH}"
+  cmd_run "brew install ${pkgs_to_install}"
 }
 
 # Retrieve casks information:
