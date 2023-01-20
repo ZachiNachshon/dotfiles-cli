@@ -253,16 +253,14 @@ test_brew_pacakges() {
   before_test "test_brew_pacakges"
 
   # Given I prepare the expected brew packages to install
-  local brew_install_pacakge_1="brew install dummy-package-1"
-  local brew_install_pacakge_2="brew install dummy-package-2"
+  local brew_install_pacakges="brew install dummy-package-1 dummy-package-2"
 
   # And I run a brew packages install command
   ./dotfiles.sh brew packages --dry-run -y -v >&"${TEST_log}" ||
     echo "Failed to run dotfiles command"
 
   # Then I expect all brew packages to get installed
-  assert_expect_log "${brew_install_pacakge_1}"
-  assert_expect_log "${brew_install_pacakge_2}"
+  assert_expect_log "${brew_install_pacakges}"
 
   after_test
 }
@@ -330,8 +328,7 @@ test_brew_all() {
   before_test "test_brew_all"
 
   # Given I prepare the expected brew packages to install
-  local brew_install_pacakge_1="brew install dummy-package-1"
-  local brew_install_pacakge_2="brew install dummy-package-2"
+  local brew_install_pacakges="brew install dummy-package-1 dummy-package-2"
 
   # And I prepare the expected brew casks to install
   local brew_install_cask_1="brew install --cask dummy-cask-1"
@@ -352,8 +349,7 @@ test_brew_all() {
     echo "Failed to run dotfiles command"
 
   # Then I expect all brew packages to get installed
-  assert_expect_log "${brew_install_pacakge_1}"
-  assert_expect_log "${brew_install_pacakge_2}"
+  assert_expect_log "${brew_install_pacakges}"
 
   # Then I expect all brew casks to get installed
   assert_expect_log "${brew_install_cask_1}"
