@@ -37,7 +37,7 @@ start_runner() {
 
   elif [[ -n "$*" ]]; then
 
-    if is_debug; then
+    if is_verbose; then
       # Resume to command execution using command arguments
       echo -e "\n--- ${RUNNER_CLI_NAME} Exec Command (inline) ---\n${RUNNER_CLI_NAME} $*\n---"
     fi
@@ -46,7 +46,7 @@ start_runner() {
 
   elif [[ -n "${RUNNER_ARGS}" ]]; then
 
-    if is_debug; then
+    if is_verbose; then
       # Resume to command execution using arguments from env var RUNNER_ARGS
       echo -e "\n--- ${RUNNER_CLI_NAME} Exec Command (RUNNER_ARGS) ---\n${RUNNER_CLI_NAME} ${RUNNER_ARGS}\n---"
     fi
@@ -55,8 +55,8 @@ start_runner() {
   fi
 }
 
-is_debug() {
-  [[ -n "${DEBUG}" ]]
+is_verbose() {
+  [[ -n "${VERBOSE}" ]]
 }
 
 main() {

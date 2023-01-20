@@ -23,7 +23,7 @@ COLOR_NONE='\033[0m'
 ICON_GOOD="${COLOR_GREEN}✔${COLOR_NONE}"
 
 is_debug() {
-  [[ -n "${LOGGER_DEBUG}" ]]
+  [[ -n "${LOGGER_VERBOSE}" ]]
 }
 
 is_silent() {

@@ -23,7 +23,7 @@ upload_version() {
   local tag=$1
   local filepath=$2
   log_info "Uploading script file. tag: ${tag}, path: ${filepath}"
-  if is_debug; then
+  if is_verbose; then
     echo """
     gh release upload ${tag} ${filepath}
     """
@@ -36,7 +36,7 @@ upload_version() {
 create_release() {
   local tag=$1
   log_info "Creating a new GitHub release. tag: ${tag}"
-  if is_debug; then
+  if is_verbose; then
     echo """
     gh release create ${tag}
     """
@@ -70,7 +70,7 @@ delete_released_version() {
 
   if [[ $(prompt_yes_no "Delete local and remote tag ${tag}" "critical") == "y" ]]; then
     log_info "Deleting local. tag: ${tag}"
-    if is_debug; then
+    if is_verbose; then
       echo """
       git tag -d ${tag}
       """
@@ -81,7 +81,7 @@ delete_released_version() {
 
     new_line
     log_info "Deleting remote. tag: ${tag}"
-    if is_debug; then
+    if is_verbose; then
       echo """
       git push origin :refs/tags/${tag}
       """
@@ -138,7 +138,7 @@ parse_program_arguments() {
   silent=${silent=''}
 }
 
-is_debug() {
+is_verbose() {
   [[ -n "${debug}" ]]
 }
 
