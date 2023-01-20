@@ -8,7 +8,7 @@ increment() {
 
 subtract() {
   local first=$1
-  local second=$1
+  local second=$2
   echo $((${first} - ${second}))
 }
 

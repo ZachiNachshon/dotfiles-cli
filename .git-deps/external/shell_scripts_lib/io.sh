@@ -31,6 +31,14 @@ is_symlink() {
   [[ -L "${abs_path}" ]]
 }
 
+is_symlink_target() {
+  local symlink=$1
+  local target=$2
+  local link_dest=$(readlink "${symlink}")
+  local result="${target}"
+  [[ "${link_dest}" != "${target}" ]]
+}
+
 is_directory_exist() {
   local path=$1
   [[ -d "${path}" ]]

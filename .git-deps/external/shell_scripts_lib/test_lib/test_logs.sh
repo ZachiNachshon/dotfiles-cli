@@ -45,7 +45,7 @@ test_log_fail() {
   test_log_print_test_result
   echo -e "$@" >"${TEST_TMPDIR}/__fail"
   echo -e "$@" >>"${TEST_log}"
-  _test_log_print_test_invocation >&2
+  _test_log_print_test_invocation >&1
   exit 1
 }
 
@@ -55,8 +55,8 @@ test_log_print_test_result() {
   local run_time=$(_get_test_run_time "${ts_start}" "${ts_end}")
 
   if [[ "${TEST_passed}" == "True" ]]; then
-    echo -e "${COLOR_GREEN}PASSED${COLOR_NONE}: ${TEST_name} (${run_time} sec)" >&2
+    echo -e "${COLOR_GREEN}PASSED${COLOR_NONE}: ${TEST_name} (${run_time} sec)" >&1
   else
-    echo -e "${COLOR_RED}FAILED${COLOR_NONE}: ${TEST_name} (${run_time} sec)" >&2
+    echo -e "${COLOR_RED}FAILED${COLOR_NONE}: ${TEST_name} (${run_time} sec)" >&1
   fi
 }

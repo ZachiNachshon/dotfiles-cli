@@ -9,7 +9,7 @@ COLOR_LIGHT_CYAN='\033[0;36m'
 COLOR_WHITE='\033[1;37m'
 COLOR_NONE='\033[0m'
 
-LOGGER_DEBUG=""
+LOGGER_VERBOSE=""
 LOGGER_SILENT=""
 LOGGER_DRY_RUN=""
 
@@ -21,14 +21,14 @@ exit_on_error() {
   exit_code=$1
   message=$2
   if [ $exit_code -ne 0 ]; then
-    #        >&2 echo "\"${message}\" command failed with exit code ${exit_code}."
-    # >&2 echo "\"${message}\""
+    #        >&1 echo "\"${message}\" command failed with exit code ${exit_code}."
+    # >&1 echo "\"${message}\""
     exit $exit_code
   fi
 }
 
-is_debug() {
-  [[ -n "${LOGGER_DEBUG}" ]]
+is_verbose() {
+  [[ -n "${LOGGER_VERBOSE}" ]]
 }
 
 is_silent() {
@@ -41,7 +41,7 @@ is_dry_run() {
 
 evaluate_dry_run_mode() {
   if is_dry_run; then
-    echo -e "${COLOR_YELLOW}Running in DRY RUN mode${COLOR_NONE}" >&2
+    echo -e "${COLOR_YELLOW}Running in DRY RUN mode${COLOR_NONE}" >&1
     new_line
   fi
 }
@@ -49,7 +49,7 @@ evaluate_dry_run_mode() {
 _log_base() {
   prefix=$1
   shift
-  echo -e "${prefix}$*" >&2
+  echo -e "${prefix}$*" >&1
 }
 
 log_debug() {
@@ -58,7 +58,7 @@ log_debug() {
     debug_level_txt+=" (Dry Run)"
   fi
 
-  if ! is_silent && is_debug; then
+  if ! is_silent && is_verbose; then
     _log_base "${COLOR_WHITE}${debug_level_txt}${COLOR_NONE}: " "$@"
   fi
 }
@@ -104,7 +104,7 @@ log_fatal() {
 }
 
 new_line() {
-  echo -e "" >&2
+  echo -e "" >&1
 }
 
 log_indicator_good() {

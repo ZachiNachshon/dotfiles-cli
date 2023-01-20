@@ -37,7 +37,7 @@ if [[ -n "${DOTFILES_CURRENT_FOLDER_ABS_PATH}" ]]; then
     if [[ "${DOTFILES_CURRENT_FOLDER_ABS_PATH}" == *bin ]]; then
       DOTFILES_CURRENT_FOLDER_ABS_PATH="${DOTFILES_CURRENT_FOLDER_ABS_PATH/bin/libexec}"
     fi
-    DOTFILES_CURRENT_FOLDER_ABS_PATH="${DOTFILES_CURRENT_FOLDER_ABS_PATH/..\/Cellar//${HOMEBREW_PREFIX_PATH}/Cellar}"
+    DOTFILES_CURRENT_FOLDER_ABS_PATH="${DOTFILES_CURRENT_FOLDER_ABS_PATH/..\/Cellar/${HOMEBREW_PREFIX_PATH}/Cellar}"
     DOTFILES_CLI_INSTALL_PATH="${DOTFILES_CURRENT_FOLDER_ABS_PATH}"
   fi
 fi
@@ -107,6 +107,7 @@ if [[ \${ARCH} == *x86_64* ]]; then \\
   HOMEBREW_PREFIX_PATH=/usr/local \\
 elif [[ \${ARCH} == *arm* ]]; then \\
   HOMEBREW_PREFIX_PATH=/opt/homebrew \\
+  eval \$($HOMEBREW_PREFIX_PATH/bin/brew shellenv) \\
 else \\
   echo -e '\''Architecture is not supported by dotfiles-cli. name: $ARCH'\'' \\
 fi \\
@@ -117,7 +118,7 @@ if [[ -n \${HOMEBREW_PREFIX_PATH} ]]; then \\
   if [[ \${dotfiles_cli_install_path} == \${HOMEBREW_PREFIX_PATH}/bin/dotfiles ]]; then \\
     homebrew_dotfiles_cli_install_path=\$(dirname \$(readlink \${dotfiles_cli_install_path})) \\
     homebrew_dotfiles_cli_install_path=\${homebrew_dotfiles_cli_install_path/bin/libexec} \\
-    homebrew_dotfiles_cli_install_path=\${homebrew_dotfiles_cli_install_path/..\\\\/Cellar//\${HOMEBREW_PREFIX_PATH}/Cellar} \\
+    homebrew_dotfiles_cli_install_path=\${homebrew_dotfiles_cli_install_path/..\\\\/Cellar/\${HOMEBREW_PREFIX_PATH}/Cellar} \\
     DOTFILES_CLI_INSTALL_PATH=\${homebrew_dotfiles_cli_install_path} \\
   fi \\
   \\
@@ -587,7 +588,7 @@ parse_program_arguments() {
         ;;
       -v | --verbose)
         # Used by logger.sh
-        export LOGGER_DEBUG="true"
+        export LOGGER_VERBOSE="true"
         shift
         ;;
       -s | --silent)
